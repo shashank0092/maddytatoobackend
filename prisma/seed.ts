@@ -61,6 +61,73 @@ const contentTypes = [
   },
 ];
 
+const categories = [
+  {
+    slug: 'spiritual',
+    coverImageKey: 'content/categories/spiritual/cover.webp',
+    translations: {
+      en: { name: 'Spiritual', description: 'Spiritual tattoo artwork inspired by faith, mythology and symbolism.', altText: 'Spiritual tattoo artwork category' },
+      gu: { name: 'આધ્યાત્મિક', description: 'ધર્મ, પૌરાણિક કથાઓ અને પ્રતીકવાદથી પ્રેરિત આધ્યાત્મિક ટેટૂ આર્ટવર્ક.', altText: 'આધ્યાત્મિક ટેટૂ આર્ટવર્ક કેટેગરી' },
+    },
+  },
+  {
+    slug: 'religious',
+    coverImageKey: 'content/categories/religious/cover.webp',
+    translations: {
+      en: { name: 'Religious', description: 'Religious and divine artwork.', altText: 'Religious tattoo artwork category' },
+      gu: { name: 'ધાર્મિક', description: 'ધાર્મિક અને દિવ્ય આર્ટવર્ક.', altText: 'ધાર્મિક ટેટૂ આર્ટવર્ક કેટેગરી' },
+    },
+  },
+  {
+    slug: 'portrait',
+    coverImageKey: 'content/categories/portrait/cover.webp',
+    translations: {
+      en: { name: 'Portrait', description: 'Realistic portrait artwork and tattoos.', altText: 'Portrait tattoo artwork category' },
+      gu: { name: 'પોર્ટ્રેટ', description: 'વાસ્તવિક પોર્ટ્રેટ આર્ટવર્ક અને ટેટૂઝ.', altText: 'પોર્ટ્રેટ ટેટૂ આર્ટવર્ક કેટેગરી' },
+    },
+  },
+  {
+    slug: 'nature',
+    coverImageKey: 'content/categories/nature/cover.webp',
+    translations: {
+      en: { name: 'Nature', description: 'Artwork inspired by the natural world.', altText: 'Nature tattoo artwork category' },
+      gu: { name: 'કુદરત', description: 'પ્રાકૃતિક વિશ્વથી પ્રેરિત આર્ટવર્ક.', altText: 'કુદરત ટેટૂ આર્ટવર્ક કેટેગરી' },
+    },
+  },
+  {
+    slug: 'animals',
+    coverImageKey: 'content/categories/animals/cover.webp',
+    translations: {
+      en: { name: 'Animals', description: 'Animal and wildlife artwork.', altText: 'Animal tattoo artwork category' },
+      gu: { name: 'પ્રાણીઓ', description: 'પ્રાણીઓ અને વન્યજીવન આર્ટવર્ક.', altText: 'પ્રાણી ટેટૂ આર્ટવર્ક કેટેગરી' },
+    },
+  },
+  {
+    slug: 'minimal',
+    coverImageKey: 'content/categories/minimal/cover.webp',
+    translations: {
+      en: { name: 'Minimal', description: 'Minimalist and simple tattoo artwork.', altText: 'Minimalist tattoo artwork category' },
+      gu: { name: 'ન્યૂનતમ', description: 'ન્યૂનતમ અને સરળ ટેટૂ આર્ટવર્ક.', altText: 'ન્યૂનતમ ટેટૂ આર્ટવર્ક કેટેગરી' },
+    },
+  },
+  {
+    slug: 'custom',
+    coverImageKey: 'content/categories/custom/cover.webp',
+    translations: {
+      en: { name: 'Custom', description: 'Custom designed tattoo artwork.', altText: 'Custom tattoo artwork category' },
+      gu: { name: 'કસ્ટમ', description: 'કસ્ટમ ડિઝાઇન કરેલ ટેટૂ આર્ટવર્ક.', altText: 'કસ્ટમ ટેટૂ આર્ટવર્ક કેટેગરી' },
+    },
+  },
+  {
+    slug: 'abstract',
+    coverImageKey: 'content/categories/abstract/cover.webp',
+    translations: {
+      en: { name: 'Abstract', description: 'Abstract and conceptual artwork.', altText: 'Abstract tattoo artwork category' },
+      gu: { name: 'અમૂર્ત', description: 'અમૂર્ત અને વૈચારિક આર્ટવર્ક.', altText: 'અમૂર્ત ટેટૂ આર્ટવર્ક કેટેગરી' },
+    },
+  },
+];
+
 async function main() {
   console.log('🌱 Seeding Content Types...');
 
@@ -119,6 +186,67 @@ async function main() {
         name: ct.translations.gu.name,
         description: ct.translations.gu.description,
         alt_text: ct.translations.gu.altText,
+      },
+    });
+  }
+
+  console.log('🌱 Seeding Categories...');
+
+  for (const cat of categories) {
+    // 1. Upsert Category
+    const category = await prisma.category.upsert({
+      where: { slug: cat.slug },
+      update: { cover_image_key: cat.coverImageKey },
+      create: {
+        slug: cat.slug,
+        cover_image_key: cat.coverImageKey,
+        is_active: true,
+      },
+    });
+
+    console.log(`✅ Upserted Category: ${cat.slug}`);
+
+    // 2. Upsert English Translation
+    await prisma.categoryTranslation.upsert({
+      where: {
+        category_id_language_code: {
+          category_id: category.id,
+          language_code: 'en',
+        },
+      },
+      update: {
+        name: cat.translations.en.name,
+        description: cat.translations.en.description,
+        alt_text: cat.translations.en.altText,
+      },
+      create: {
+        category_id: category.id,
+        language_code: 'en',
+        name: cat.translations.en.name,
+        description: cat.translations.en.description,
+        alt_text: cat.translations.en.altText,
+      },
+    });
+
+    // 3. Upsert Gujarati Translation
+    await prisma.categoryTranslation.upsert({
+      where: {
+        category_id_language_code: {
+          category_id: category.id,
+          language_code: 'gu',
+        },
+      },
+      update: {
+        name: cat.translations.gu.name,
+        description: cat.translations.gu.description,
+        alt_text: cat.translations.gu.altText,
+      },
+      create: {
+        category_id: category.id,
+        language_code: 'gu',
+        name: cat.translations.gu.name,
+        description: cat.translations.gu.description,
+        alt_text: cat.translations.gu.altText,
       },
     });
   }

@@ -6,6 +6,7 @@ import blogRoutes from '../modules/blog/blog.routes';
 import feedbackRoutes from '../modules/feedback/feedback.routes';
 import queriesRoutes from '../modules/queries/queries.routes';
 import contentTypeRoutes from '../modules/content-type/content-type.routes';
+import { categoryRoutes } from '../modules/category';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/blog', blogRoutes);
 router.use('/feedback', feedbackRoutes);
 router.use('/queries', queriesRoutes);
 router.use('/content-types', contentTypeRoutes);
+router.use('/categories', categoryRoutes);
 
 export default router;
