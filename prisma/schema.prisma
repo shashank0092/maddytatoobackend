@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// A minimal user model to ensure Prisma can generate the client
+// Full authentication module implementation will expand this later.
+model User {
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String    @unique
+  password_hash String
+  first_name    String
+  last_name     String?
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now()) @db.Timestamptz()
+  updated_at    DateTime  @default(now()) @updatedAt @db.Timestamptz()
+  last_login_at DateTime? @db.Timestamptz()
+
+  @@map("users")
+}
