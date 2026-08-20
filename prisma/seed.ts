@@ -409,6 +409,24 @@ const bodyPlacements = [
   },
 ];
 
+const tags = [
+  { slug: 'shiva', en: 'Shiva', gu: 'શિવ' },
+  { slug: 'mahadev', en: 'Mahadev', gu: 'મહાદેવ' },
+  { slug: 'om', en: 'Om', gu: 'ૐ' },
+  { slug: 'indian', en: 'Indian', gu: 'ભારતીય' },
+  { slug: 'spiritual', en: 'Spiritual', gu: 'આધ્યાત્મિક' },
+  { slug: 'blackwork', en: 'Blackwork', gu: 'બ્લેકવર્ક' },
+  { slug: 'portrait', en: 'Portrait', gu: 'પોર્ટ્રેટ' },
+  { slug: 'mandala', en: 'Mandala', gu: 'મંડલા' },
+  { slug: 'lion', en: 'Lion', gu: 'સિંહ' },
+  { slug: 'tiger', en: 'Tiger', gu: 'વાઘ' },
+  { slug: 'minimal', en: 'Minimal', gu: 'મિનિમલ' },
+  { slug: 'custom', en: 'Custom', gu: 'કસ્ટમ' },
+  { slug: 'handmade', en: 'Handmade', gu: 'હેન્ડમેડ' },
+  { slug: 'religious', en: 'Religious', gu: 'ધાર્મિક' },
+  { slug: 'traditional', en: 'Traditional', gu: 'પરંપરાગત' },
+];
+
 async function main() {
   console.log('🌱 Seeding Content Types...');
 
@@ -711,6 +729,58 @@ async function main() {
         name: bp.translations.gu.name,
         description: bp.translations.gu.description,
         alt_text: bp.translations.gu.altText,
+      },
+    });
+  }
+
+  console.log('🌱 Seeding Tags...');
+
+  for (const tagData of tags) {
+    // 1. Upsert Tag
+    const tag = await prisma.tag.upsert({
+      where: { slug: tagData.slug },
+      update: {},
+      create: {
+        slug: tagData.slug,
+        is_active: true,
+      },
+    });
+
+    console.log(`✅ Upserted Tag: ${tagData.slug}`);
+
+    // 2. Upsert English Translation
+    await prisma.tagTranslation.upsert({
+      where: {
+        tag_id_language_code: {
+          tag_id: tag.id,
+          language_code: 'en',
+        },
+      },
+      update: {
+        name: tagData.en,
+      },
+      create: {
+        tag_id: tag.id,
+        language_code: 'en',
+        name: tagData.en,
+      },
+    });
+
+    // 3. Upsert Gujarati Translation
+    await prisma.tagTranslation.upsert({
+      where: {
+        tag_id_language_code: {
+          tag_id: tag.id,
+          language_code: 'gu',
+        },
+      },
+      update: {
+        name: tagData.gu,
+      },
+      create: {
+        tag_id: tag.id,
+        language_code: 'gu',
+        name: tagData.gu,
       },
     });
   }

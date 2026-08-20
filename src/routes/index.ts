@@ -10,6 +10,7 @@ import { categoryRoutes } from '../modules/category';
 import { collectionRoutes } from '../modules/collection';
 import { styleRoutes } from '../modules/style';
 import { bodyPlacementRoutes } from '../modules/body-placement';
+import { tagRoutes } from '../modules/tag';
 const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
@@ -22,5 +23,6 @@ router.use('/categories', categoryRoutes);
 router.use('/collections', collectionRoutes);
 router.use('/styles', styleRoutes);
 router.use('/body-placements', bodyPlacementRoutes);
+router.use('/tags', tagRoutes);
 
 export default router;
