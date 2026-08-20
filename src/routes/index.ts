@@ -5,6 +5,7 @@ import contentRoutes from '../modules/content/content.routes';
 import blogRoutes from '../modules/blog/blog.routes';
 import feedbackRoutes from '../modules/feedback/feedback.routes';
 import queriesRoutes from '../modules/queries/queries.routes';
+import contentTypeRoutes from '../modules/content-type/content-type.routes';
 
 const router = Router();
 
@@ -14,5 +15,6 @@ router.use('/content', contentRoutes);
 router.use('/blog', blogRoutes);
 router.use('/feedback', feedbackRoutes);
 router.use('/queries', queriesRoutes);
+router.use('/content-types', contentTypeRoutes);
 
 export default router;

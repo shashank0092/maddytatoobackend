@@ -5,15 +5,11 @@ export const successResponse = <T>(data: T) => {
   };
 };
 
-export const listResponse = <T>(data: T[], page: number, limit: number, total: number) => {
+export const listResponse = <T, M = unknown>(data: T[], meta: M) => {
   return {
     success: true,
     data,
-    meta: {
-      page,
-      limit,
-      total,
-    },
+    meta,
   };
 };
 
