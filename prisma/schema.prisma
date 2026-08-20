@@ -158,3 +158,37 @@ model StyleTranslation {
   @@index([language_code])
   @@map("style_translations")
 }
+
+model BodyPlacement {
+  id              String  @id @default(uuid()) @db.Uuid
+  slug            String  @unique
+  cover_image_key String?
+  is_active       Boolean @default(true)
+
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @updatedAt @db.Timestamptz()
+
+  translations BodyPlacementTranslation[]
+
+  @@map("body_placements")
+}
+
+model BodyPlacementTranslation {
+  id String @id @default(uuid()) @db.Uuid
+
+  body_placement_id String @db.Uuid
+  language_code     String
+
+  name        String
+  description String?
+  alt_text    String?
+
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @updatedAt @db.Timestamptz()
+
+  body_placement BodyPlacement @relation(fields: [body_placement_id], references: [id], onDelete: Cascade)
+
+  @@unique([body_placement_id, language_code])
+  @@index([language_code])
+  @@map("body_placement_translations")
+}

@@ -1,0 +1,1771 @@
+{
+  "info": {
+    "name": "Maddy's Tattoo & Art - Body Placement API Tests",
+    "description": "Production Postman test bodyPlacement for Body Placement module.",
+    "schema": "https://schema.getpostman.com/json/bodyPlacement/v2.1.0/bodyPlacement.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5001/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "admin_email",
+      "value": "maddytattotech@gmail.com",
+      "type": "string"
+    },
+    {
+      "key": "admin_password",
+      "value": "Mm@123456",
+      "type": "string"
+    },
+    {
+      "key": "bodyPlacement_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bodyPlacement_slug",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "created_bodyPlacement_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "created_bodyPlacement_slug",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "00 - Authentication",
+      "item": [
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', () => { pm.response.to.have.status(200); });",
+                  "const res = pm.response.json();",
+                  "pm.test('Success is true', () => { pm.expect(res.success).to.be.true; });",
+                  "pm.test('No password exposed', () => { pm.expect(res.data).to.not.have.property('password'); pm.expect(res.data).to.not.have.property('password_hash'); });",
+                  "pm.test('Response time < 2000ms', () => { pm.expect(pm.response.responseTime).to.be.below(2000); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 - Public List",
+      "item": [
+        {
+          "name": "List Default Language",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });",
+                  "const res = pm.response.json();",
+                  "pm.test('Success is true', () => { pm.expect(res.success).to.be.true; });",
+                  "pm.test('Data is array', () => { pm.expect(res.data).to.be.an('array'); });",
+                  "pm.test('No inactive content', () => { res.data.forEach(item => pm.expect(item.isActive).to.be.true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List English",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });",
+                  "const res = pm.response.json();",
+                  "pm.test('English properties exist', () => { if(res.data.length > 0) { pm.expect(res.data[0]).to.have.property('name'); } });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?lang=en",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Gujarati",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });",
+                  "const res = pm.response.json();",
+                  "pm.test('Gujarati properties exist', () => { if(res.data.length > 0) { pm.expect(res.data[0]).to.have.property('name'); } });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?lang=gu",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "gu"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });",
+                  "const res = pm.response.json();",
+                  "pm.test('Meta exists', () => { pm.expect(res.meta).to.exist; pm.expect(res.meta.page).to.eql(1); pm.expect(res.meta.limit).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?page=1&limit=2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Pagination Second Page",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });",
+                  "const res = pm.response.json();",
+                  "pm.test('Meta page is 2', () => { pm.expect(res.meta.page).to.eql(2); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?page=2&limit=2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "limit",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Pagination Limit Protection",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.expect(pm.response.code).to.eql(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?page=1&limit=101",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "101"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Pagination Invalid Page",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.expect(pm.response.code).to.eql(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?page=0",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Pagination Invalid Limit",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.expect(pm.response.code).to.eql(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?limit=0",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Pagination String Page",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.expect(pm.response.code).to.eql(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?page=abc",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "abc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Pagination Empty Page",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });",
+                  "const res = pm.response.json();",
+                  "pm.test('Data is empty', () => { pm.expect(res.data).to.be.empty; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?page=9999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "9999"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Sorting Latest",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?sort=latest",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "latest"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Sorting Oldest",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?sort=oldest",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "oldest"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Sorting Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?lang=en&sort=name",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                },
+                {
+                  "key": "sort",
+                  "value": "name"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search English",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?lang=en&search=tattoo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                },
+                {
+                  "key": "search",
+                  "value": "tattoo"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Gujarati",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?lang=gu&search=ટેટૂ",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "gu"
+                },
+                {
+                  "key": "search",
+                  "value": "ટેટૂ"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Unsupported Language",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.response.to.have.status(400); });",
+                  "const res = pm.response.json();",
+                  "pm.test('Code is validation error', () => { pm.expect(res.success).to.be.false; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?lang=fr",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "fr"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Empty Search Result",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });",
+                  "const res = pm.response.json();",
+                  "pm.test('Data is empty array', () => { pm.expect(res.data).to.be.an('array').that.is.empty; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements?lang=en&search=this-bodyPlacement-definitely-does-not-exist",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                },
+                {
+                  "key": "search",
+                  "value": "this-bodyPlacement-definitely-does-not-exist"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Public Detail",
+      "item": [
+        {
+          "name": "Get By Slug English",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements/tattoo?lang=en",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "tattoo"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "en"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get By Slug Gujarati",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements/tattoo?lang=gu",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "tattoo"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "gu"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get By Slug Fallback",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements/tattoo?lang=gu",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "tattoo"
+              ],
+              "query": [
+                {
+                  "key": "lang",
+                  "value": "gu"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Invalid Slug",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', () => { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements/this-slug-does-not-exist",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "this-slug-does-not-exist"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Admin Create",
+      "item": [
+        {
+          "name": "Create Valid Multilingual",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', () => { pm.response.to.have.status(201); });",
+                  "const res = pm.response.json();",
+                  "if(res.success) { pm.bodyPlacementVariables.set('created_bodyPlacement_id', res.data.id); pm.bodyPlacementVariables.set('created_bodyPlacement_slug', res.data.slug); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"postman-tattoo-test-{{$timestamp}}\",\n  \"coverImageKey\": \"content/body-placements/postman-tattoo-test/cover.webp\",\n  \"isActive\": true,\n  \"translations\": {\n    \"en\": {\n      \"name\": \"Postman Tattoo Test\",\n      \"description\": \"Test content type created by the Postman test suite.\",\n      \"altText\": \"Postman Tattoo Test cover image\"\n    },\n    \"gu\": {\n      \"name\": \"પોસ્ટમેન ટેટૂ ટેસ્ટ\",\n      \"description\": \"Postman test suite દ્વારા બનાવવામાં આવેલ ટેસ્ટ કન્ટેન્ટ પ્રકાર.\",\n      \"altText\": \"પોસ્ટમેન ટેટૂ ટેસ્ટ કવર ઇમેજ\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create English Only",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201 or 400 depending on config', () => { pm.expect(pm.response.code).to.be.oneOf([201, 400]); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"postman-en-only-{{$timestamp}}\",\n  \"coverImageKey\": \"content/body-placements/postman-en-only/cover.webp\",\n  \"isActive\": true,\n  \"translations\": {\n    \"en\": {\n      \"name\": \"English Only\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Missing Slug",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"en\": {\n      \"name\": \"Invalid Body Placement\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Invalid Slug",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"Invalid Slug!!!\",\n  \"translations\": {\n    \"en\": {\n      \"name\": \"Invalid\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Duplicate Slug",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 409', () => { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"tattoo\",\n  \"translations\": {\n    \"en\": {\n      \"name\": \"Duplicate\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Missing English Translation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"missing-english-test\",\n  \"translations\": {\n    \"gu\": {\n      \"name\": \"ટેસ્ટ\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Missing Translation Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"missing-name-test\",\n  \"translations\": {\n    \"en\": {\n      \"description\": \"Description without name\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Unsupported Language",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"unsupported-language-test\",\n  \"translations\": {\n    \"fr\": {\n      \"name\": \"Tatouage\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Invalid S3 Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"invalid-s3-test\",\n  \"coverImageKey\": \"https://example.com/image.webp\",\n  \"translations\": {\n    \"en\": {\n      \"name\": \"Invalid S3 Test\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Admin Update",
+      "item": [
+        {
+          "name": "Update Slug",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });",
+                  "const res = pm.response.json();",
+                  "if(res.success) { pm.bodyPlacementVariables.set('created_bodyPlacement_slug', res.data.slug); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"postman-tattoo-test-updated\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Cover Image",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coverImageKey\": \"content/body-placements/postman-tattoo-test-updated/cover.webp\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deactivate Body Placement",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reactivate Body Placement",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update English Translation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"en\": {\n      \"name\": \"Updated Postman Tattoo\",\n      \"description\": \"Updated English description.\",\n      \"altText\": \"Updated English alt text.\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Gujarati Translation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"gu\": {\n      \"name\": \"અપડેટેડ પોસ્ટમેન ટેટૂ\",\n      \"description\": \"અપડેટેડ ગુજરાતી વર્ણન.\",\n      \"altText\": \"અપડેટેડ ગુજરાતી અલ્ટ ટેક્સ્ટ.\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add Missing Translation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"gu\": {\n      \"name\": \"નવું ટેટૂ\",\n      \"description\": \"નવું ગુજરાતી વર્ણન.\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Duplicate Slug Update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 409', () => { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"tattoo\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Invalid UUID Update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements/not-a-valid-uuid",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "not-a-valid-uuid"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Admin Delete",
+      "item": [
+        {
+          "name": "Delete Body Placement",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Invalid UUID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/body-placements/not-a-valid-uuid",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "not-a-valid-uuid"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Non Existing",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', () => { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/body-placements/d6e5a6fc-77b3-4fba-bb81-1901a88a4e33",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "d6e5a6fc-77b3-4fba-bb81-1901a88a4e33"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - End To End Flow",
+      "item": [
+        {
+          "name": "Create",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', () => { pm.response.to.have.status(201); });",
+                  "const res = pm.response.json();",
+                  "if(res.success) { pm.bodyPlacementVariables.set('created_bodyPlacement_id', res.data.id); pm.bodyPlacementVariables.set('created_bodyPlacement_slug', res.data.slug); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"e2e-tattoo-test-{{$timestamp}}\",\n  \"isActive\": true,\n  \"translations\": {\n    \"en\": {\n      \"name\": \"E2E Tattoo Test\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Read",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_slug}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deactivate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Verify Public Invisibility",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', () => { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_slug}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_slug}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reactivate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/body-placements/{{created_bodyPlacement_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "body-placements",
+                "{{created_bodyPlacement_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
