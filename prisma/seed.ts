@@ -128,6 +128,49 @@ const categories = [
   },
 ];
 
+const collections = [
+  {
+    slug: 'mahadev',
+    coverImageKey: 'content/collections/mahadev/cover.webp',
+    translations: {
+      en: { name: 'Mahadev Collection', description: 'A curated collection of Mahadev-inspired tattoo artworks.', altText: 'Mahadev tattoo art collection' },
+      gu: { name: 'મહાદેવ કલેક્શન', description: 'મહાદેવથી પ્રેરિત ટેટૂ આર્ટવર્કનો પસંદગીયુક્ત સંગ્રહ.', altText: 'મહાદેવ ટેટૂ આર્ટ કલેક્શન' },
+    },
+  },
+  {
+    slug: 'ramayana',
+    coverImageKey: 'content/collections/ramayana/cover.webp',
+    translations: {
+      en: { name: 'Ramayana Collection', description: null, altText: null },
+      gu: { name: 'રામાયણ કલેક્શન', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'personal-collection',
+    coverImageKey: 'content/collections/personal-collection/cover.webp',
+    translations: {
+      en: { name: 'Personal Collection', description: null, altText: null },
+      gu: { name: 'પર્સનલ કલેક્શન', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'best-of-maddy',
+    coverImageKey: 'content/collections/best-of-maddy/cover.webp',
+    translations: {
+      en: { name: 'Best of Maddy', description: null, altText: null },
+      gu: { name: 'મેડીનું શ્રેષ્ઠ કાર્ય', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'spiritual',
+    coverImageKey: 'content/collections/spiritual/cover.webp',
+    translations: {
+      en: { name: 'Spiritual Collection', description: null, altText: null },
+      gu: { name: 'આધ્યાત્મિક કલેક્શન', description: null, altText: null },
+    },
+  },
+];
+
 async function main() {
   console.log('🌱 Seeding Content Types...');
 
@@ -247,6 +290,67 @@ async function main() {
         name: cat.translations.gu.name,
         description: cat.translations.gu.description,
         alt_text: cat.translations.gu.altText,
+      },
+    });
+  }
+
+  console.log('🌱 Seeding Collections...');
+
+  for (const col of collections) {
+    // 1. Upsert Collection
+    const collection = await prisma.collection.upsert({
+      where: { slug: col.slug },
+      update: { cover_image_key: col.coverImageKey },
+      create: {
+        slug: col.slug,
+        cover_image_key: col.coverImageKey,
+        is_active: true,
+      },
+    });
+
+    console.log(`✅ Upserted Collection: ${col.slug}`);
+
+    // 2. Upsert English Translation
+    await prisma.collectionTranslation.upsert({
+      where: {
+        collection_id_language_code: {
+          collection_id: collection.id,
+          language_code: 'en',
+        },
+      },
+      update: {
+        name: col.translations.en.name,
+        description: col.translations.en.description,
+        alt_text: col.translations.en.altText,
+      },
+      create: {
+        collection_id: collection.id,
+        language_code: 'en',
+        name: col.translations.en.name,
+        description: col.translations.en.description,
+        alt_text: col.translations.en.altText,
+      },
+    });
+
+    // 3. Upsert Gujarati Translation
+    await prisma.collectionTranslation.upsert({
+      where: {
+        collection_id_language_code: {
+          collection_id: collection.id,
+          language_code: 'gu',
+        },
+      },
+      update: {
+        name: col.translations.gu.name,
+        description: col.translations.gu.description,
+        alt_text: col.translations.gu.altText,
+      },
+      create: {
+        collection_id: collection.id,
+        language_code: 'gu',
+        name: col.translations.gu.name,
+        description: col.translations.gu.description,
+        alt_text: col.translations.gu.altText,
       },
     });
   }

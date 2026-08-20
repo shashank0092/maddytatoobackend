@@ -7,7 +7,7 @@ import feedbackRoutes from '../modules/feedback/feedback.routes';
 import queriesRoutes from '../modules/queries/queries.routes';
 import contentTypeRoutes from '../modules/content-type/content-type.routes';
 import { categoryRoutes } from '../modules/category';
-
+import { collectionRoutes } from '../modules/collection';
 const router = Router();
 
 router.use('/health', healthRoutes);
@@ -18,5 +18,6 @@ router.use('/feedback', feedbackRoutes);
 router.use('/queries', queriesRoutes);
 router.use('/content-types', contentTypeRoutes);
 router.use('/categories', categoryRoutes);
+router.use('/collections', collectionRoutes);
 
 export default router;
