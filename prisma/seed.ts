@@ -270,6 +270,145 @@ const styles = [
   },
 ];
 
+const bodyPlacements = [
+  {
+    slug: 'arm',
+    coverImageKey: 'content/body-placements/arm/cover.webp',
+    translations: {
+      en: { name: 'Arm', description: null, altText: null },
+      gu: { name: 'હાથ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'upper-arm',
+    coverImageKey: 'content/body-placements/upper-arm/cover.webp',
+    translations: {
+      en: { name: 'Upper Arm', description: null, altText: null },
+      gu: { name: 'ઉપરનો હાથ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'forearm',
+    coverImageKey: 'content/body-placements/forearm/cover.webp',
+    translations: {
+      en: { name: 'Forearm', description: 'A popular tattoo placement located on the lower arm.', altText: 'Forearm tattoo placement' },
+      gu: { name: 'ફોરઆર્મ', description: 'નીચેના હાથ પર આવેલું લોકપ્રિય ટેટૂ પ્લેસમેન્ટ.', altText: 'ફોરઆર્મ ટેટૂ પ્લેસમેન્ટ' },
+    },
+  },
+  {
+    slug: 'sleeve',
+    coverImageKey: 'content/body-placements/sleeve/cover.webp',
+    translations: {
+      en: { name: 'Sleeve', description: null, altText: null },
+      gu: { name: 'સ્લીવ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'wrist',
+    coverImageKey: 'content/body-placements/wrist/cover.webp',
+    translations: {
+      en: { name: 'Wrist', description: null, altText: null },
+      gu: { name: 'કાંડો', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'hand',
+    coverImageKey: 'content/body-placements/hand/cover.webp',
+    translations: {
+      en: { name: 'Hand', description: null, altText: null },
+      gu: { name: 'હાથ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'shoulder',
+    coverImageKey: 'content/body-placements/shoulder/cover.webp',
+    translations: {
+      en: { name: 'Shoulder', description: null, altText: null },
+      gu: { name: 'ખભો', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'chest',
+    coverImageKey: 'content/body-placements/chest/cover.webp',
+    translations: {
+      en: { name: 'Chest', description: null, altText: null },
+      gu: { name: 'છાતી', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'back',
+    coverImageKey: 'content/body-placements/back/cover.webp',
+    translations: {
+      en: { name: 'Back', description: null, altText: null },
+      gu: { name: 'પીઠ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'spine',
+    coverImageKey: 'content/body-placements/spine/cover.webp',
+    translations: {
+      en: { name: 'Spine', description: null, altText: null },
+      gu: { name: 'કરોડરજ્જુ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'neck',
+    coverImageKey: 'content/body-placements/neck/cover.webp',
+    translations: {
+      en: { name: 'Neck', description: null, altText: null },
+      gu: { name: 'ગળું', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'rib',
+    coverImageKey: 'content/body-placements/rib/cover.webp',
+    translations: {
+      en: { name: 'Rib', description: null, altText: null },
+      gu: { name: 'પાંસળી', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'thigh',
+    coverImageKey: 'content/body-placements/thigh/cover.webp',
+    translations: {
+      en: { name: 'Thigh', description: null, altText: null },
+      gu: { name: 'જાંઘ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'calf',
+    coverImageKey: 'content/body-placements/calf/cover.webp',
+    translations: {
+      en: { name: 'Calf', description: null, altText: null },
+      gu: { name: 'પગનો પાછળનો ભાગ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'leg',
+    coverImageKey: 'content/body-placements/leg/cover.webp',
+    translations: {
+      en: { name: 'Leg', description: null, altText: null },
+      gu: { name: 'પગ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'ankle',
+    coverImageKey: 'content/body-placements/ankle/cover.webp',
+    translations: {
+      en: { name: 'Ankle', description: null, altText: null },
+      gu: { name: 'પગની ઘૂંટી', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'foot',
+    coverImageKey: 'content/body-placements/foot/cover.webp',
+    translations: {
+      en: { name: 'Foot', description: null, altText: null },
+      gu: { name: 'પગનો પંજો', description: null, altText: null },
+    },
+  },
+];
+
 async function main() {
   console.log('🌱 Seeding Content Types...');
 
@@ -511,6 +650,67 @@ async function main() {
         name: styleData.translations.gu.name,
         description: styleData.translations.gu.description,
         alt_text: styleData.translations.gu.altText,
+      },
+    });
+  }
+
+  console.log('🌱 Seeding Body Placements...');
+
+  for (const bp of bodyPlacements) {
+    // 1. Upsert Body Placement
+    const bodyPlacement = await prisma.bodyPlacement.upsert({
+      where: { slug: bp.slug },
+      update: { cover_image_key: bp.coverImageKey },
+      create: {
+        slug: bp.slug,
+        cover_image_key: bp.coverImageKey,
+        is_active: true,
+      },
+    });
+
+    console.log(`✅ Upserted Body Placement: ${bp.slug}`);
+
+    // 2. Upsert English Translation
+    await prisma.bodyPlacementTranslation.upsert({
+      where: {
+        body_placement_id_language_code: {
+          body_placement_id: bodyPlacement.id,
+          language_code: 'en',
+        },
+      },
+      update: {
+        name: bp.translations.en.name,
+        description: bp.translations.en.description,
+        alt_text: bp.translations.en.altText,
+      },
+      create: {
+        body_placement_id: bodyPlacement.id,
+        language_code: 'en',
+        name: bp.translations.en.name,
+        description: bp.translations.en.description,
+        alt_text: bp.translations.en.altText,
+      },
+    });
+
+    // 3. Upsert Gujarati Translation
+    await prisma.bodyPlacementTranslation.upsert({
+      where: {
+        body_placement_id_language_code: {
+          body_placement_id: bodyPlacement.id,
+          language_code: 'gu',
+        },
+      },
+      update: {
+        name: bp.translations.gu.name,
+        description: bp.translations.gu.description,
+        alt_text: bp.translations.gu.altText,
+      },
+      create: {
+        body_placement_id: bodyPlacement.id,
+        language_code: 'gu',
+        name: bp.translations.gu.name,
+        description: bp.translations.gu.description,
+        alt_text: bp.translations.gu.altText,
       },
     });
   }

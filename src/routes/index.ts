@@ -9,7 +9,7 @@ import contentTypeRoutes from '../modules/content-type/content-type.routes';
 import { categoryRoutes } from '../modules/category';
 import { collectionRoutes } from '../modules/collection';
 import { styleRoutes } from '../modules/style';
-
+import { bodyPlacementRoutes } from '../modules/body-placement';
 const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
@@ -21,5 +21,6 @@ router.use('/content-types', contentTypeRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/collections', collectionRoutes);
 router.use('/styles', styleRoutes);
+router.use('/body-placements', bodyPlacementRoutes);
 
 export default router;
