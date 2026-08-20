@@ -8,8 +8,9 @@ import queriesRoutes from '../modules/queries/queries.routes';
 import contentTypeRoutes from '../modules/content-type/content-type.routes';
 import { categoryRoutes } from '../modules/category';
 import { collectionRoutes } from '../modules/collection';
-const router = Router();
+import { styleRoutes } from '../modules/style';
 
+const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
 router.use('/content', contentRoutes);
@@ -19,5 +20,6 @@ router.use('/queries', queriesRoutes);
 router.use('/content-types', contentTypeRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/collections', collectionRoutes);
+router.use('/styles', styleRoutes);
 
 export default router;
