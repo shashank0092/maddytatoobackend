@@ -171,6 +171,105 @@ const collections = [
   },
 ];
 
+const styles = [
+  {
+    slug: 'realism',
+    coverImageKey: 'content/styles/realism/cover.webp',
+    translations: {
+      en: { name: 'Realism', description: 'A highly detailed tattoo style focused on realistic textures, depth and lifelike representation.', altText: 'Realism tattoo style artwork' },
+      gu: { name: 'રિયાલિઝમ', description: 'વાસ્તવિક ટેક્સચર, ઊંડાણ અને જીવંત રજૂઆત પર આધારિત ટેટૂ શૈલી.', altText: 'રિયાલિઝમ ટેટૂ સ્ટાઇલ આર્ટવર્ક' },
+    },
+  },
+  {
+    slug: 'black-and-grey',
+    coverImageKey: 'content/styles/black-and-grey/cover.webp',
+    translations: {
+      en: { name: 'Black & Grey', description: null, altText: null },
+      gu: { name: 'બ્લેક એન્ડ ગ્રે', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'fine-line',
+    coverImageKey: 'content/styles/fine-line/cover.webp',
+    translations: {
+      en: { name: 'Fine Line', description: null, altText: null },
+      gu: { name: 'ફાઇન લાઇન', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'minimalist',
+    coverImageKey: 'content/styles/minimalist/cover.webp',
+    translations: {
+      en: { name: 'Minimalist', description: null, altText: null },
+      gu: { name: 'મિનિમલિસ્ટ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'neo-traditional',
+    coverImageKey: 'content/styles/neo-traditional/cover.webp',
+    translations: {
+      en: { name: 'Neo Traditional', description: null, altText: null },
+      gu: { name: 'નિયો ટ્રેડિશનલ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'traditional',
+    coverImageKey: 'content/styles/traditional/cover.webp',
+    translations: {
+      en: { name: 'Traditional', description: null, altText: null },
+      gu: { name: 'ટ્રેડિશનલ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'watercolor',
+    coverImageKey: 'content/styles/watercolor/cover.webp',
+    translations: {
+      en: { name: 'Watercolor', description: null, altText: null },
+      gu: { name: 'વોટરકલર', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'japanese',
+    coverImageKey: 'content/styles/japanese/cover.webp',
+    translations: {
+      en: { name: 'Japanese', description: null, altText: null },
+      gu: { name: 'જાપાનીઝ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'geometric',
+    coverImageKey: 'content/styles/geometric/cover.webp',
+    translations: {
+      en: { name: 'Geometric', description: null, altText: null },
+      gu: { name: 'જ્યોમેટ્રિક', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'lettering',
+    coverImageKey: 'content/styles/lettering/cover.webp',
+    translations: {
+      en: { name: 'Lettering', description: null, altText: null },
+      gu: { name: 'લેટરિંગ', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'dotwork',
+    coverImageKey: 'content/styles/dotwork/cover.webp',
+    translations: {
+      en: { name: 'Dotwork', description: null, altText: null },
+      gu: { name: 'ડોટવર્ક', description: null, altText: null },
+    },
+  },
+  {
+    slug: 'surrealism',
+    coverImageKey: 'content/styles/surrealism/cover.webp',
+    translations: {
+      en: { name: 'Surrealism', description: null, altText: null },
+      gu: { name: 'સર્રિયાલિઝમ', description: null, altText: null },
+    },
+  },
+];
+
 async function main() {
   console.log('🌱 Seeding Content Types...');
 
@@ -351,6 +450,67 @@ async function main() {
         name: col.translations.gu.name,
         description: col.translations.gu.description,
         alt_text: col.translations.gu.altText,
+      },
+    });
+  }
+
+  console.log('🌱 Seeding Styles...');
+
+  for (const styleData of styles) {
+    // 1. Upsert Style
+    const style = await prisma.style.upsert({
+      where: { slug: styleData.slug },
+      update: { cover_image_key: styleData.coverImageKey },
+      create: {
+        slug: styleData.slug,
+        cover_image_key: styleData.coverImageKey,
+        is_active: true,
+      },
+    });
+
+    console.log(`✅ Upserted Style: ${styleData.slug}`);
+
+    // 2. Upsert English Translation
+    await prisma.styleTranslation.upsert({
+      where: {
+        style_id_language_code: {
+          style_id: style.id,
+          language_code: 'en',
+        },
+      },
+      update: {
+        name: styleData.translations.en.name,
+        description: styleData.translations.en.description,
+        alt_text: styleData.translations.en.altText,
+      },
+      create: {
+        style_id: style.id,
+        language_code: 'en',
+        name: styleData.translations.en.name,
+        description: styleData.translations.en.description,
+        alt_text: styleData.translations.en.altText,
+      },
+    });
+
+    // 3. Upsert Gujarati Translation
+    await prisma.styleTranslation.upsert({
+      where: {
+        style_id_language_code: {
+          style_id: style.id,
+          language_code: 'gu',
+        },
+      },
+      update: {
+        name: styleData.translations.gu.name,
+        description: styleData.translations.gu.description,
+        alt_text: styleData.translations.gu.altText,
+      },
+      create: {
+        style_id: style.id,
+        language_code: 'gu',
+        name: styleData.translations.gu.name,
+        description: styleData.translations.gu.description,
+        alt_text: styleData.translations.gu.altText,
       },
     });
   }
