@@ -33,6 +33,7 @@ model ContentType {
   updated_at DateTime @updatedAt @db.Timestamptz()
 
   translations ContentTypeTranslation[]
+  contents     Content[]
 
   @@map("content_types")
 }
@@ -67,6 +68,7 @@ model Category {
   updated_at DateTime @updatedAt @db.Timestamptz()
 
   translations CategoryTranslation[]
+  contents     Content[]
 
   @@map("categories")
 }
@@ -101,6 +103,7 @@ model Collection {
   updated_at DateTime @updatedAt @db.Timestamptz()
 
   translations CollectionTranslation[]
+  contents     Content[]
 
   @@map("collections")
 }
@@ -135,6 +138,7 @@ model Style {
   updated_at DateTime @updatedAt @db.Timestamptz()
 
   translations StyleTranslation[]
+  contents     Content[]
 
   @@map("styles")
 }
@@ -169,6 +173,7 @@ model BodyPlacement {
   updated_at DateTime @updatedAt @db.Timestamptz()
 
   translations BodyPlacementTranslation[]
+  contents     Content[]
 
   @@map("body_placements")
 }
@@ -201,6 +206,7 @@ model Tag {
   updated_at DateTime @updatedAt @db.Timestamptz()
 
   translations TagTranslation[]
+  contents     ContentTag[]
 
   @@map("tags")
 }
@@ -218,4 +224,181 @@ model TagTranslation {
   @@unique([tag_id, language_code])
   @@index([language_code])
   @@map("tag_translations")
+}
+
+// -----------------------------------------------------------------------------
+// MAIN CONTENT MODULE
+// -----------------------------------------------------------------------------
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum MediaRole {
+  COVER
+  GALLERY
+  PROCESS
+  VIDEO
+}
+
+enum DisplaySurface {
+  HOME
+  DISCOVER
+  MUSEUM
+  COMMUNITY
+}
+
+enum DisplayType {
+  FEATURED
+  LATEST
+  EDITOR_PICK
+  SPOTLIGHT
+}
+
+model Content {
+  id                String        @id @default(uuid()) @db.Uuid
+  content_type_id   String        @db.Uuid
+  category_id       String?       @db.Uuid
+  collection_id     String?       @db.Uuid
+  style_id          String?       @db.Uuid
+  body_placement_id String?       @db.Uuid
+  slug              String        @unique
+  status            ContentStatus @default(DRAFT)
+  published_at      DateTime?     @db.Timestamptz()
+  created_at        DateTime      @default(now()) @db.Timestamptz()
+  updated_at        DateTime      @updatedAt @db.Timestamptz()
+
+  content_type   ContentType    @relation(fields: [content_type_id], references: [id])
+  category       Category?      @relation(fields: [category_id], references: [id])
+  collection     Collection?    @relation(fields: [collection_id], references: [id])
+  style          Style?         @relation(fields: [style_id], references: [id])
+  body_placement BodyPlacement? @relation(fields: [body_placement_id], references: [id])
+
+  translations ContentTranslation[]
+  media        ContentMedia[]
+  tags         ContentTag[]
+  displays     ContentDisplay[]
+  seo          ContentSEO?
+
+  @@index([content_type_id])
+  @@index([category_id])
+  @@index([collection_id])
+  @@index([style_id])
+  @@index([body_placement_id])
+  @@index([status])
+  @@index([published_at])
+  @@map("contents")
+}
+
+model ContentTranslation {
+  id                String   @id @default(uuid()) @db.Uuid
+  content_id        String   @db.Uuid
+  language_code     String
+  title             String
+  short_description String?
+  description       String?
+  story             String?
+  inspiration       String?
+  meaning           String?
+  process           String?
+  created_at        DateTime @default(now()) @db.Timestamptz()
+  updated_at        DateTime @updatedAt @db.Timestamptz()
+
+  content Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
+
+  @@unique([content_id, language_code])
+  @@index([language_code])
+  @@map("content_translations")
+}
+
+model ContentMedia {
+  id         String    @id @default(uuid()) @db.Uuid
+  content_id String    @db.Uuid
+  media_type MediaType
+  role       MediaRole
+  s3_key     String
+  alt_text   String?
+  sort_order Int       @default(0)
+  is_active  Boolean   @default(true)
+  created_at DateTime  @default(now()) @db.Timestamptz()
+  updated_at DateTime  @updatedAt @db.Timestamptz()
+
+  content Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
+
+  @@index([content_id])
+  @@index([content_id, role])
+  @@index([content_id, sort_order])
+  @@map("content_media")
+}
+
+model ContentTag {
+  content_id String   @db.Uuid
+  tag_id     String   @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz()
+
+  content Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@id([content_id, tag_id])
+  @@index([tag_id])
+  @@map("content_tags")
+}
+
+model ContentDisplay {
+  id           String         @id @default(uuid()) @db.Uuid
+  content_id   String         @db.Uuid
+  surface      DisplaySurface
+  display_type DisplayType
+  sort_order   Int            @default(0)
+  is_active    Boolean        @default(true)
+  created_at   DateTime       @default(now()) @db.Timestamptz()
+  updated_at   DateTime       @updatedAt @db.Timestamptz()
+
+  content Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
+
+  @@unique([content_id, surface, display_type])
+  @@index([surface, display_type])
+  @@index([content_id])
+  @@map("content_displays")
+}
+
+model ContentSEO {
+  id            String   @id @default(uuid()) @db.Uuid
+  content_id    String   @unique @db.Uuid
+  og_image_key  String?
+  canonical_url String?
+  created_at    DateTime @default(now()) @db.Timestamptz()
+  updated_at    DateTime @updatedAt @db.Timestamptz()
+
+  content Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
+
+  translations ContentSEOTranslation[]
+
+  @@map("content_seo")
+}
+
+model ContentSEOTranslation {
+  id               String   @id @default(uuid()) @db.Uuid
+  content_seo_id   String   @db.Uuid
+  language_code    String
+  meta_title       String?
+  meta_description String?
+  keywords         String?
+  og_title         String?
+  og_description   String?
+  created_at       DateTime @default(now()) @db.Timestamptz()
+  updated_at       DateTime @updatedAt @db.Timestamptz()
+
+  content_seo ContentSEO @relation(fields: [content_seo_id], references: [id], onDelete: Cascade)
+
+  @@unique([content_seo_id, language_code])
+  @@index([language_code])
+  @@map("content_seo_translations")
 }

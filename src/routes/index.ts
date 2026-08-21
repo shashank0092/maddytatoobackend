@@ -14,7 +14,7 @@ import { tagRoutes } from '../modules/tag';
 const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
-router.use('/content', contentRoutes);
+router.use('/contents', contentRoutes);
 router.use('/blog', blogRoutes);
 router.use('/feedback', feedbackRoutes);
 router.use('/queries', queriesRoutes);

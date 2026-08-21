@@ -785,6 +785,161 @@ async function main() {
     });
   }
 
+  console.log('🌱 Seeding Main Content Example...');
+
+  const contentTypeTattoo = await prisma.contentType.findUnique({ where: { slug: 'tattoo' } });
+  const categorySpiritual = await prisma.category.findUnique({ where: { slug: 'spiritual' } });
+  const collectionMahadev = await prisma.collection.findUnique({ where: { slug: 'mahadev' } });
+  const styleRealism = await prisma.style.findUnique({ where: { slug: 'realism' } });
+  const bodyPlacementForearm = await prisma.bodyPlacement.findUnique({ where: { slug: 'forearm' } });
+
+  const shivaTag = await prisma.tag.findUnique({ where: { slug: 'shiva' } });
+  const mahadevTag = await prisma.tag.findUnique({ where: { slug: 'mahadev' } });
+  const omTag = await prisma.tag.findUnique({ where: { slug: 'om' } });
+
+  if (contentTypeTattoo) {
+    const mainContentSlug = 'mahadev-realism-tattoo';
+    
+    // 1. Upsert Content
+    const content = await prisma.content.upsert({
+      where: { slug: mainContentSlug },
+      update: {
+        status: 'PUBLISHED',
+        published_at: new Date('2026-08-20T00:00:00Z'),
+        content_type_id: contentTypeTattoo.id,
+        category_id: categorySpiritual?.id,
+        collection_id: collectionMahadev?.id,
+        style_id: styleRealism?.id,
+        body_placement_id: bodyPlacementForearm?.id,
+      },
+      create: {
+        slug: mainContentSlug,
+        status: 'PUBLISHED',
+        published_at: new Date('2026-08-20T00:00:00Z'),
+        content_type_id: contentTypeTattoo.id,
+        category_id: categorySpiritual?.id,
+        collection_id: collectionMahadev?.id,
+        style_id: styleRealism?.id,
+        body_placement_id: bodyPlacementForearm?.id,
+      },
+    });
+
+    console.log(`✅ Upserted Main Content: ${mainContentSlug}`);
+
+    // 2. Upsert English Translation
+    await prisma.contentTranslation.upsert({
+      where: { content_id_language_code: { content_id: content.id, language_code: 'en' } },
+      update: {
+        title: 'Mahadev Realism Tattoo',
+        short_description: 'A detailed Mahadev realism tattoo inspired by Shiva.',
+        description: 'A highly detailed tattoo inspired by the symbolism and presence of Lord Shiva.',
+        story: 'This piece was created around the idea of strength and spiritual depth.',
+      },
+      create: {
+        content_id: content.id,
+        language_code: 'en',
+        title: 'Mahadev Realism Tattoo',
+        short_description: 'A detailed Mahadev realism tattoo inspired by Shiva.',
+        description: 'A highly detailed tattoo inspired by the symbolism and presence of Lord Shiva.',
+        story: 'This piece was created around the idea of strength and spiritual depth.',
+      },
+    });
+
+    // 3. Upsert Gujarati Translation
+    await prisma.contentTranslation.upsert({
+      where: { content_id_language_code: { content_id: content.id, language_code: 'gu' } },
+      update: {
+        title: 'મહાદેવ રિયાલિઝમ ટેટૂ',
+        short_description: 'શિવથી પ્રેરિત વિગતવાર મહાદેવ રિયાલિઝમ ટેટૂ.',
+      },
+      create: {
+        content_id: content.id,
+        language_code: 'gu',
+        title: 'મહાદેવ રિયાલિઝમ ટેટૂ',
+        short_description: 'શિવથી પ્રેરિત વિગતવાર મહાદેવ રિયાલિઝમ ટેટૂ.',
+      },
+    });
+
+    // 4. Upsert Content Media (COVER)
+    const coverMediaKey = 'content/tattoos/mahadev-realism/cover.webp';
+    await prisma.contentMedia.deleteMany({ where: { content_id: content.id, role: 'COVER' } });
+    await prisma.contentMedia.create({
+      data: {
+        content_id: content.id,
+        media_type: 'IMAGE',
+        role: 'COVER',
+        s3_key: coverMediaKey,
+        sort_order: 0,
+      }
+    });
+
+    // 5. Content Tags
+    await prisma.contentTag.deleteMany({ where: { content_id: content.id } });
+    const tagsToConnect = [shivaTag, mahadevTag, omTag].filter(Boolean) as { id: string }[];
+    for (const t of tagsToConnect) {
+      await prisma.contentTag.create({
+        data: {
+          content_id: content.id,
+          tag_id: t.id,
+        }
+      });
+    }
+
+    // 6. Content Display (HOME FEATURED)
+    await prisma.contentDisplay.upsert({
+      where: {
+        content_id_surface_display_type: {
+          content_id: content.id,
+          surface: 'HOME',
+          display_type: 'FEATURED',
+        }
+      },
+      update: { sort_order: 1 },
+      create: {
+        content_id: content.id,
+        surface: 'HOME',
+        display_type: 'FEATURED',
+        sort_order: 1,
+      }
+    });
+
+    // 7. Content SEO
+    const seo = await prisma.contentSEO.upsert({
+      where: { content_id: content.id },
+      update: { og_image_key: coverMediaKey },
+      create: { content_id: content.id, og_image_key: coverMediaKey },
+    });
+
+    // 8. Content SEO Translations
+    await prisma.contentSEOTranslation.upsert({
+      where: { content_seo_id_language_code: { content_seo_id: seo.id, language_code: 'en' } },
+      update: {
+        meta_title: 'Mahadev Realism Tattoo | Maddy Tattoo Artist',
+        meta_description: 'Explore a detailed Mahadev realism tattoo created by Maddy.',
+      },
+      create: {
+        content_seo_id: seo.id,
+        language_code: 'en',
+        meta_title: 'Mahadev Realism Tattoo | Maddy Tattoo Artist',
+        meta_description: 'Explore a detailed Mahadev realism tattoo created by Maddy.',
+      },
+    });
+
+    await prisma.contentSEOTranslation.upsert({
+      where: { content_seo_id_language_code: { content_seo_id: seo.id, language_code: 'gu' } },
+      update: {
+        meta_title: 'મહાદેવ રિયાલિઝમ ટેટૂ | મેડી ટેટૂ આર્ટિસ્ટ',
+        meta_description: 'મેડી દ્વારા બનાવેલ મહાદેવ રિયાલિઝમ ટેટૂ જુઓ.',
+      },
+      create: {
+        content_seo_id: seo.id,
+        language_code: 'gu',
+        meta_title: 'મહાદેવ રિયાલિઝમ ટેટૂ | મેડી ટેટૂ આર્ટિસ્ટ',
+        meta_description: 'મેડી દ્વારા બનાવેલ મહાદેવ રિયાલિઝમ ટેટૂ જુઓ.',
+      },
+    });
+  }
+
   console.log('✅ Seeding completed successfully!');
 }
 
