@@ -73,7 +73,7 @@ export class ContentService {
         take,
         include: {
           translations: { where: { language_code: { in: [lang, 'en'] } } },
-          media: { where: { role: 'COVER', is_active: true }, take: 1, orderBy: { sort_order: 'asc' } },
+          media: { where: { role: 'COVER', is_active: true }, take: 1, orderBy: { sort_order: 'asc' }, include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
           content_type: { include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
           category: { include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
           collection: { include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
@@ -129,7 +129,7 @@ export class ContentService {
       where,
       include: {
         translations: { where: { language_code: { in: [lang, 'en'] } } },
-        media: { orderBy: { sort_order: 'asc' } },
+        media: { orderBy: { sort_order: 'asc' }, include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
         content_type: { include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
         category: { include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
         collection: { include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
@@ -167,7 +167,7 @@ export class ContentService {
         role: m.role,
         mediaType: m.media_type,
         s3Key: m.s3_key,
-        altText: m.alt_text,
+        altText: (m.translations?.find((t: any) => t.language_code === lang) || m.translations?.find((t: any) => t.language_code === 'en'))?.alt_text || null,
         sortOrder: m.sort_order,
         isActive: m.is_active,
       })),
@@ -333,7 +333,7 @@ export class ContentService {
             role: m.role,
             media_type: m.mediaType,
             s3_key: m.s3Key,
-            alt_text: m.altText,
+
             sort_order: m.sortOrder,
             is_active: m.isActive,
           }))

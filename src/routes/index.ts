@@ -11,6 +11,7 @@ import { collectionRoutes } from '../modules/collection';
 import { styleRoutes } from '../modules/style';
 import { bodyPlacementRoutes } from '../modules/body-placement';
 import { tagRoutes } from '../modules/tag';
+import { mediaRoutes } from '../modules/media';
 const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
@@ -24,5 +25,6 @@ router.use('/collections', collectionRoutes);
 router.use('/styles', styleRoutes);
 router.use('/body-placements', bodyPlacementRoutes);
 router.use('/tags', tagRoutes);
+router.use('/media', mediaRoutes);
 
 export default router;

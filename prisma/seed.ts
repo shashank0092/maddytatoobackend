@@ -785,6 +785,7 @@ async function main() {
     });
   }
 
+
   console.log('🌱 Seeding Main Content Example...');
 
   const contentTypeTattoo = await prisma.contentType.findUnique({ where: { slug: 'tattoo' } });
@@ -936,6 +937,112 @@ async function main() {
         language_code: 'gu',
         meta_title: 'મહાદેવ રિયાલિઝમ ટેટૂ | મેડી ટેટૂ આર્ટિસ્ટ',
         meta_description: 'મેડી દ્વારા બનાવેલ મહાદેવ રિયાલિઝમ ટેટૂ જુઓ.',
+      }
+    });
+  }
+
+  console.log('🌱 Seeding Demo Content and Media...');
+
+  const firstContentType = await prisma.contentType.findFirst();
+
+  if (firstContentType) {
+    const demoContent = await prisma.content.upsert({
+      where: { slug: 'mahadev-realism-demo' },
+      update: {},
+      create: {
+        slug: 'mahadev-realism-demo',
+        content_type_id: firstContentType.id,
+        status: 'PUBLISHED',
+      },
+    });
+
+    await prisma.contentMedia.deleteMany({
+      where: { content_id: demoContent.id }
+    });
+
+    // 1. Cover Image
+    await prisma.contentMedia.create({
+      data: {
+        content_id: demoContent.id,
+        media_type: 'IMAGE',
+        role: 'COVER',
+        s3_key: 'content/tattoos/demo/cover.webp',
+        sort_order: 0,
+        translations: {
+          create: [
+            { language_code: 'en', alt_text: 'Mahadev realism tattoo' },
+            { language_code: 'gu', alt_text: 'મહાદેવ રિયાલિઝમ ટેટૂ' },
+          ],
+        },
+      },
+    });
+
+    // 2. Gallery Image 1
+    await prisma.contentMedia.create({
+      data: {
+        content_id: demoContent.id,
+        media_type: 'IMAGE',
+        role: 'GALLERY',
+        s3_key: 'content/tattoos/demo/gallery-01.webp',
+        sort_order: 1,
+        translations: {
+          create: [
+            { language_code: 'en', alt_text: 'Gallery image 1' },
+            { language_code: 'gu', alt_text: 'ગેલેરી ઇમેજ 1' },
+          ],
+        },
+      },
+    });
+
+    // 3. Gallery Image 2
+    await prisma.contentMedia.create({
+      data: {
+        content_id: demoContent.id,
+        media_type: 'IMAGE',
+        role: 'GALLERY',
+        s3_key: 'content/tattoos/demo/gallery-02.webp',
+        sort_order: 2,
+        translations: {
+          create: [
+            { language_code: 'en', alt_text: 'Gallery image 2' },
+            { language_code: 'gu', alt_text: 'ગેલેરી ઇમેજ 2' },
+          ],
+        },
+      },
+    });
+
+    // 4. Process Image
+    await prisma.contentMedia.create({
+      data: {
+        content_id: demoContent.id,
+        media_type: 'IMAGE',
+        role: 'PROCESS',
+        s3_key: 'content/tattoos/demo/process-01.webp',
+        sort_order: 3,
+        translations: {
+          create: [
+            { language_code: 'en', alt_text: 'Process of tattooing' },
+            { language_code: 'gu', alt_text: 'ટેટૂ કરવાની પ્રક્રિયા' },
+          ],
+        },
+      },
+    });
+
+    // 5. Video
+    await prisma.contentMedia.create({
+      data: {
+        content_id: demoContent.id,
+        media_type: 'VIDEO',
+        role: 'VIDEO',
+        s3_key: 'content/tattoos/demo/video-01.mp4',
+        sort_order: 4,
+        translations: {
+          create: [
+            { language_code: 'en', alt_text: 'Tattoo showcase video' },
+            { language_code: 'gu', alt_text: 'ટેટૂ પ્રદર્શન વિડિઓ' },
+          ],
+        },
+
       },
     });
   }

@@ -1,0 +1,1740 @@
+{
+  "info": {
+    "name": "Maddy Tattoo - Media API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1"
+    },
+    {
+      "key": "authCookie",
+      "value": ""
+    },
+    {
+      "key": "contentId",
+      "value": "00000000-0000-0000-0000-000000000001"
+    },
+    {
+      "key": "mediaId",
+      "value": "00000000-0000-0000-0000-000000000002"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create Media",
+      "item": [
+        {
+          "name": "Valid Image Cover",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "if (jsonData.data && jsonData.data.id) {",
+                  "    pm.collectionVariables.set('mediaId', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"content/tattoos/test/cover.webp\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"COVER\",\n  \"sortOrder\": 0,\n  \"isActive\": true,\n  \"translations\": {\n    \"en\": {\n      \"altText\": \"Test tattoo cover image\"\n    },\n    \"gu\": {\n      \"altText\": \"ટેસ્ટ ટેટૂ કવર ઈમેજ\"\n    }\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Valid Gallery",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"content/tattoos/test/gallery-01.webp\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"GALLERY\",\n  \"sortOrder\": 1,\n  \"isActive\": true,\n  \"translations\": {\n    \"en\": {\n      \"altText\": \"Tattoo gallery image\"\n    },\n    \"gu\": {\n      \"altText\": \"ટેટૂ ગેલેરી ઈમેજ\"\n    }\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Valid Process",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"content/tattoos/test/process-01.webp\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"PROCESS\",\n  \"sortOrder\": 2,\n  \"isActive\": true,\n  \"translations\": {\n    \"en\": {\n      \"altText\": \"Tattoo creation process\"\n    },\n    \"gu\": {\n      \"altText\": \"ટેટૂ બનાવવાની પ્રક્રિયા\"\n    }\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Valid Video",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"content/tattoos/test/video-01.mp4\",\n  \"mediaType\": \"VIDEO\",\n  \"role\": \"VIDEO\",\n  \"sortOrder\": 3,\n  \"isActive\": true,\n  \"translations\": {\n    \"en\": {\n      \"altText\": \"Tattoo process video\"\n    },\n    \"gu\": {\n      \"altText\": \"ટેટૂ પ્રક્રિયા વિડિયો\"\n    }\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Minimal Valid Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"content/tattoos/test/simple.webp\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"GALLERY\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Missing Content ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"s3Key\": \"content/tattoos/test/simple.webp\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"GALLERY\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Missing S3 Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"GALLERY\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Invalid S3 Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"invalid-key\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"GALLERY\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Path Traversal",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"content/../image.webp\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"GALLERY\"\n}"
+            }
+          }
+        },
+        {
+          "name": "External URL",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"https://example.com/image.webp\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"GALLERY\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Invalid Media Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"content/test/image.webp\",\n  \"mediaType\": \"DOCUMENT\",\n  \"role\": \"GALLERY\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Invalid Role",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"content/test/image.webp\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"THUMBNAIL\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Invalid Sort Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"content/test/image.webp\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"GALLERY\",\n  \"sortOrder\": -1\n}"
+            }
+          }
+        },
+        {
+          "name": "Invalid Translation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"content/test/image.webp\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"GALLERY\",\n  \"translations\": {\n    \"fr\": {\n      \"altText\": \"French text\"\n    }\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Unauthenticated",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"s3Key\": \"content/tattoos/test/cover.webp\",\n  \"mediaType\": \"IMAGE\",\n  \"role\": \"COVER\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Media",
+      "item": [
+        {
+          "name": "Update Role",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"GALLERY\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Sort Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sortOrder\": 5\n}"
+            }
+          }
+        },
+        {
+          "name": "Activate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Deactivate",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isActive\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Update English Alt Text",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"en\": {\n      \"altText\": \"Updated English alt text\"\n    }\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Gujarati Alt Text",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"gu\": {\n      \"altText\": \"અપડેટ કરેલ ગુજરાતી ઓલ્ટ ટેક્સ્ટ\"\n    }\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Both Languages",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"en\": {\n      \"altText\": \"Updated English text\"\n    },\n    \"gu\": {\n      \"altText\": \"અપડેટ કરેલ ગુજરાતી ટેક્સ્ટ\"\n    }\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Add Missing Translation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"gu\": {\n      \"altText\": \"Added Gujarati\"\n    }\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Multiple Fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"GALLERY\",\n  \"sortOrder\": 10,\n  \"isActive\": true,\n  \"translations\": {\n    \"en\": {\n      \"altText\": \"Updated gallery image\"\n    },\n    \"gu\": {\n      \"altText\": \"અપડેટ કરેલ ગેલેરી ઈમેજ\"\n    }\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Invalid ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/invalid-uuid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "invalid-uuid"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"GALLERY\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Non Existing Media",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/00000000-0000-0000-0000-000000000003",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "00000000-0000-0000-0000-000000000003"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"GALLERY\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Forbidden contentId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"another-id\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Forbidden s3Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"s3Key\": \"content/another-file.webp\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Forbidden mediaType",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mediaType\": \"VIDEO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Unauthenticated",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"GALLERY\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Media",
+      "item": [
+        {
+          "name": "Successful Delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Invalid ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/invalid-uuid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "invalid-uuid"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Non Existing Media",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/00000000-0000-0000-0000-000000000003",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "00000000-0000-0000-0000-000000000003"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Unauthenticated",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Success is false', function () {",
+                  "    pm.expect(jsonData.success).to.eql(false);",
+                  "});",
+                  "pm.test('Error exists', function () {",
+                  "    pm.expect(jsonData.error).to.exist;",
+                  "    pm.expect(jsonData.error.code).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/media/{{mediaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "media",
+                "{{mediaId}}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
