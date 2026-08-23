@@ -1,0 +1,2370 @@
+{
+  "info": {
+    "name": "Maddy Tattoo - Blog API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "authCookie",
+      "value": "empty",
+      "type": "string"
+    },
+    {
+      "key": "blogId",
+      "value": "00000000-0000-0000-0000-000000000001",
+      "type": "string"
+    },
+    {
+      "key": "blogSlug",
+      "value": "complete-guide-to-realism-tattoos",
+      "type": "string"
+    },
+    {
+      "key": "contentId",
+      "value": "00000000-0000-0000-0000-000000000002",
+      "type": "string"
+    },
+    {
+      "key": "mediaKey",
+      "value": "blogs/test/cover.webp",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create Blog",
+      "item": [
+        {
+          "name": "Valid English + Gujarati",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"complete-guide-to-realism-tattoos\",\n  \"authorName\": \"Maddy\",\n  \"readingTime\": 8,\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Complete Guide to Realism Tattoos\",\n      \"excerpt\": \"Everything you need to know about realism tattoos.\",\n      \"content\": \"<h1>Complete Guide to Realism Tattoos</h1><p>Realism tattoos require precision and attention to detail.</p><h2>What Makes Realism Different?</h2><ul><li>Detailed shading</li><li>Realistic proportions</li></ul>\"\n    },\n    \"gu\": {\n      \"title\": \"રિયાલિઝમ ટેટૂ માટે સંપૂર્ણ માર્ગદર્શિકા\",\n      \"excerpt\": \"રિયાલિઝમ ટેટૂ વિશે સંપૂર્ણ માહિતી.\",\n      \"content\": \"<h1>રિયાલિઝમ ટેટૂ માટે સંપૂર્ણ માર્ગદર્શિકા</h1><p>રિયાલિઝમ ટેટૂ માટે ચોકસાઈ અને વિગત પર ધ્યાન જરૂરી છે.</p><h2>રિયાલિઝમ ટેટૂને શું અલગ બનાવે છે?</h2><ul><li>વિગતવાર શેડિંગ</li><li>વાસ્તવિક પ્રમાણ</li></ul>\"\n    }\n  },\n  \"seo\": {\n    \"canonicalUrl\": \"https://example.com/blog/complete-guide-to-realism-tattoos\",\n    \"ogImageKey\": \"blogs/realism-tattoo-guide/og-image.webp\",\n    \"translations\": {\n      \"en\": {\n        \"metaTitle\": \"Complete Guide to Realism Tattoos\",\n        \"metaDescription\": \"Learn everything about realism tattoos.\",\n        \"keywords\": \"realism tattoo, tattoo guide\",\n        \"ogTitle\": \"Complete Guide to Realism Tattoos\",\n        \"ogDescription\": \"A complete guide to realism tattoos.\"\n      },\n      \"gu\": {\n        \"metaTitle\": \"રિયાલિઝમ ટેટૂ માટે સંપૂર્ણ માર્ગદર્શિકા\",\n        \"metaDescription\": \"રિયાલિઝમ ટેટૂ વિશે સંપૂર્ણ માહિતી.\",\n        \"keywords\": \"રિયાલિઝમ ટેટૂ, ટેટૂ માર્ગદર્શિકા\",\n        \"ogTitle\": \"રિયાલિઝમ ટેટૂ માર્ગદર્શિકા\",\n        \"ogDescription\": \"રિયાલિઝમ ટેટૂ માટે માર્ગદર્શિકા.\"\n      }\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json?.data?.id) {",
+                  "    pm.collectionVariables.set(\"blogId\", json.data.id);",
+                  "}",
+                  "if (json?.data?.slug) {",
+                  "    pm.collectionVariables.set(\"blogSlug\", json.data.slug);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "English Only",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"english-only-blog\",\n  \"translations\": {\n    \"en\": {\n      \"title\": \"English Only Title\",\n      \"content\": \"<h1>English Only Content</h1>\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Minimal Valid",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"minimal-test-blog\",\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Minimal Test Blog\",\n      \"content\": \"<h1>Minimal Test Blog</h1><p>This is a test.</p>\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Missing Slug",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Test\",\n      \"content\": \"<p>Test</p>\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Missing English",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"missing-english\",\n  \"translations\": {\n    \"gu\": {\n      \"title\": \"Test\",\n      \"content\": \"<p>Test</p>\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Duplicate Slug",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"complete-guide-to-realism-tattoos\",\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Test\",\n      \"content\": \"<p>Test</p>\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Slug",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"INVALID SLUG!\",\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Test\",\n      \"content\": \"<p>Test</p>\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Language",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"invalid-lang\",\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Test\",\n      \"content\": \"<p>Test</p>\"\n    },\n    \"fr\": {\n      \"title\": \"Test\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Reading Time",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"invalid-reading-time\",\n  \"readingTime\": -5,\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Test\",\n      \"content\": \"<p>Test</p>\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid HTML",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"invalid-html\",\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Test\",\n      \"content\": 12345\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Dangerous HTML",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"dangerous-html\",\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Test\",\n      \"content\": \"<script>alert('xss')</script><img src='javascript:alert(1)'><div onclick='alert(1)'>Test</div><iframe src='https://example.com'></iframe><p>Safe content</p>\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unauthenticated",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"unauth\",\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Test\",\n      \"content\": \"<p>Test</p>\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "List Blogs",
+      "item": [
+        {
+          "name": "Default Pagination",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs",
+              "host": [
+                "{{baseUrl}}/blogs"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Page 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}/blogs?page=1&limit=10"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Page 2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?page=2&limit=10",
+              "host": [
+                "{{baseUrl}}/blogs?page=2&limit=10"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Different Limits (5)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?page=1&limit=5",
+              "host": [
+                "{{baseUrl}}/blogs?page=1&limit=5"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Different Limits (100)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?page=1&limit=100",
+              "host": [
+                "{{baseUrl}}/blogs?page=1&limit=100"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Pagination (Negative)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?page=-1&limit=-1",
+              "host": [
+                "{{baseUrl}}/blogs?page=-1&limit=-1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Pagination (String)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?page=abc&limit=abc",
+              "host": [
+                "{{baseUrl}}/blogs?page=abc&limit=abc"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Pagination (Too Large)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?page=1&limit=101",
+              "host": [
+                "{{baseUrl}}/blogs?page=1&limit=101"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Status Filter (PUBLISHED)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?status=PUBLISHED",
+              "host": [
+                "{{baseUrl}}/blogs?status=PUBLISHED"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Status Filter (DRAFT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?status=DRAFT",
+              "host": [
+                "{{baseUrl}}/blogs?status=DRAFT"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?status=INVALID",
+              "host": [
+                "{{baseUrl}}/blogs?status=INVALID"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Language Filter (en)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?language=en",
+              "host": [
+                "{{baseUrl}}/blogs?language=en"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Language Filter (gu)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?language=gu",
+              "host": [
+                "{{baseUrl}}/blogs?language=gu"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?search=realism",
+              "host": [
+                "{{baseUrl}}/blogs?search=realism"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Gujarati Search",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?search=રિયાલિઝમ&language=gu",
+              "host": [
+                "{{baseUrl}}/blogs?search=રિયાલિઝમ&language=gu"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sorting (createdAt asc)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?sortBy=createdAt&sortOrder=asc",
+              "host": [
+                "{{baseUrl}}/blogs?sortBy=createdAt&sortOrder=asc"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sorting (publishedAt desc)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?sortBy=publishedAt&sortOrder=desc",
+              "host": [
+                "{{baseUrl}}/blogs?sortBy=publishedAt&sortOrder=desc"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Sorting",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?sortBy=invalidField",
+              "host": [
+                "{{baseUrl}}/blogs?sortBy=invalidField"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Combined Filters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?page=1&limit=10&status=PUBLISHED&language=en&search=realism&sortBy=publishedAt&sortOrder=desc",
+              "host": [
+                "{{baseUrl}}/blogs?page=1&limit=10&status=PUBLISHED&language=en&search=realism&sortBy=publishedAt&sortOrder=desc"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empty Results",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?search=this-blog-definitely-does-not-exist",
+              "host": [
+                "{{baseUrl}}/blogs?search=this-blog-definitely-does-not-exist"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Large Page",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs?page=9999&limit=10",
+              "host": [
+                "{{baseUrl}}/blogs?page=9999&limit=10"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Get Blog",
+      "item": [
+        {
+          "name": "English",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogSlug}}?language=en",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogSlug}}?language=en"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Gujarati",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogSlug}}?language=gu",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogSlug}}?language=gu"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Gujarati Fallback",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/minimal-test-blog?language=gu",
+              "host": [
+                "{{baseUrl}}/blogs/minimal-test-blog?language=gu"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Slug",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/does-not-exist",
+              "host": [
+                "{{baseUrl}}/blogs/does-not-exist"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Draft Security",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/english-only-blog",
+              "host": [
+                "{{baseUrl}}/blogs/english-only-blog"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Update Blog",
+      "item": [
+        {
+          "name": "Update Title",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Updated Realism Tattoo Guide\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update HTML",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"en\": {\n      \"content\": \"<h1>Updated Blog Content</h1><p>This content has been updated.</p><h2>New Section</h2>\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Gujarati",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"gu\": {\n      \"title\": \"અપડેટ કરેલ રિયાલિઝમ ટેટૂ માર્ગદર્શિકા\",\n      \"content\": \"<h1>અપડેટ કરેલ સામગ્રી</h1><p>આ અપડેટ કરેલ ગુજરાતી સામગ્રી છે.</p>\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Slug",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"updated-realism-tattoo-guide\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "const reqBody = JSON.parse(pm.request.body.raw);",
+                  "if (reqBody.slug) {",
+                  "    pm.collectionVariables.set(\"blogSlug\", reqBody.slug);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Reading Time",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"readingTime\": 12\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Multiple Fields",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"complete-guide-to-realism-tattoos\",\n  \"authorName\": \"New Author\",\n  \"readingTime\": 10,\n  \"translations\": {\n    \"en\": {\n      \"title\": \"Multiple Update Title\"\n    },\n    \"gu\": {\n      \"title\": \"બહુવિધ અપડેટ શીર્ષક\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "const reqBody = JSON.parse(pm.request.body.raw);",
+                  "if (reqBody.slug) {",
+                  "    pm.collectionVariables.set(\"blogSlug\", reqBody.slug);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Cases (Unauthenticated)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"readingTime\": 10\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Cases (Negative Time)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"readingTime\": -10\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Cases (Duplicate Slug)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"english-only-blog\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Delete Blog",
+      "item": [
+        {
+          "name": "Successful Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid ID",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/invalid-id",
+              "host": [
+                "{{baseUrl}}/blogs/invalid-id"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Non Existing Blog",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}/blogs/00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unauthenticated",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Blog Status",
+      "item": [
+        {
+          "name": "Draft to Published",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/status",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PUBLISHED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Published to Draft",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/status",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"DRAFT\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Published to Archived",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/status",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ARCHIVED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Archived to Published",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/status",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PUBLISHED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/status",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"INVALID\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Publish Validation (No English Title)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/status",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PUBLISHED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Blog SEO",
+      "item": [
+        {
+          "name": "Create/Update SEO",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/seo",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/seo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"canonicalUrl\": \"https://example.com/blog/realism-tattoo-guide\",\n  \"ogImageKey\": \"blogs/realism-tattoo-guide/og-image.webp\",\n  \"translations\": {\n    \"en\": {\n      \"metaTitle\": \"Complete Guide to Realism Tattoos\",\n      \"metaDescription\": \"Learn everything about realism tattoos.\",\n      \"keywords\": \"realism tattoo, tattoo guide\",\n      \"ogTitle\": \"Complete Guide to Realism Tattoos\",\n      \"ogDescription\": \"A complete guide to realism tattoos.\"\n    },\n    \"gu\": {\n      \"metaTitle\": \"રિયાલિઝમ ટેટૂ માટે સંપૂર્ણ માર્ગદર્શિકા\",\n      \"metaDescription\": \"રિયાલિઝમ ટેટૂ વિશે સંપૂર્ણ માહિતી.\",\n      \"keywords\": \"રિયાલિઝમ ટેટૂ, ટેટૂ માર્ગદર્શિકા\",\n      \"ogTitle\": \"રિયાલિઝમ ટેટૂ માર્ગદર્શિકા\",\n      \"ogDescription\": \"રિયાલિઝમ ટેટૂ માટે માર્ગદર્શિકા.\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "English SEO",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/seo",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/seo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"en\": {\n      \"metaTitle\": \"Only English SEO Update\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Gujarati SEO",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/seo",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/seo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"translations\": {\n    \"gu\": {\n      \"metaTitle\": \"Only Gujarati SEO Update\"\n    }\n  }\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid SEO (URL)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/seo",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/seo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"canonicalUrl\": \"invalid-url\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Validation error returned\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401, 403, 404, 409]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Blog Media",
+      "item": [
+        {
+          "name": "Update Media Reference",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/media",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coverMediaKey\": \"blogs/realism-tattoo-guide/cover.webp\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Media Key",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/media",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coverMediaKey\": \"\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "External URL",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/blogs/{{blogId}}/media",
+              "host": [
+                "{{baseUrl}}/blogs/{{blogId}}/media"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coverMediaKey\": \"https://example.com/image.webp\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is expected\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

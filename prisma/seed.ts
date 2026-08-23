@@ -428,6 +428,98 @@ const tags = [
 ];
 
 async function main() {
+  console.log('🌱 Seeding Blog Module...');
+
+  const blogSlug = 'realism-tattoo-guide';
+
+  const blog = await prisma.blog.upsert({
+    where: { slug: blogSlug },
+    update: {},
+    create: {
+      slug: blogSlug,
+      status: 'DRAFT',
+    },
+  });
+
+  console.log(`✅ Upserted Blog: ${blogSlug}`);
+
+  // English Translation
+  await prisma.blogTranslation.upsert({
+    where: {
+      blog_id_language_code: {
+        blog_id: blog.id,
+        language_code: 'en',
+      },
+    },
+    update: {
+      title: 'Complete Guide to Realism Tattoos',
+      content: '<h1>Complete Guide to Realism Tattoos</h1>\n<p>This is a development blog.</p>',
+    },
+    create: {
+      blog_id: blog.id,
+      language_code: 'en',
+      title: 'Complete Guide to Realism Tattoos',
+      content: '<h1>Complete Guide to Realism Tattoos</h1>\n<p>This is a development blog.</p>',
+    },
+  });
+
+  // Gujarati Translation
+  await prisma.blogTranslation.upsert({
+    where: {
+      blog_id_language_code: {
+        blog_id: blog.id,
+        language_code: 'gu',
+      },
+    },
+    update: {
+      title: 'રિયાલિઝમ ટેટૂ માટે સંપૂર્ણ માર્ગદર્શિકા',
+      content: '<h1>રિયાલિઝમ ટેટૂ માટે સંપૂર્ણ માર્ગદર્શિકા</h1>\n<p>આ ડેવલપમેન્ટ બ્લોગ છે.</p>',
+    },
+    create: {
+      blog_id: blog.id,
+      language_code: 'gu',
+      title: 'રિયાલિઝમ ટેટૂ માટે સંપૂર્ણ માર્ગદર્શિકા',
+      content: '<h1>રિયાલિઝમ ટેટૂ માટે સંપૂર્ણ માર્ગદર્શિકા</h1>\n<p>આ ડેવલપમેન્ટ બ્લોગ છે.</p>',
+    },
+  });
+
+  // SEO
+  const blogSeo = await prisma.blogSeo.upsert({
+    where: { blog_id: blog.id },
+    update: {},
+    create: { blog_id: blog.id },
+  });
+
+  // SEO English
+  await prisma.blogSeoTranslation.upsert({
+    where: {
+      blog_seo_id_language_code: {
+        blog_seo_id: blogSeo.id,
+        language_code: 'en',
+      },
+    },
+    update: {},
+    create: {
+      blog_seo_id: blogSeo.id,
+      language_code: 'en',
+    },
+  });
+
+  // SEO Gujarati
+  await prisma.blogSeoTranslation.upsert({
+    where: {
+      blog_seo_id_language_code: {
+        blog_seo_id: blogSeo.id,
+        language_code: 'gu',
+      },
+    },
+    update: {},
+    create: {
+      blog_seo_id: blogSeo.id,
+      language_code: 'gu',
+    },
+  });
+
   console.log('🌱 Seeding Content Types...');
 
   for (const ct of contentTypes) {
@@ -939,6 +1031,8 @@ async function main() {
       },
     });
   }
+
+
 
   console.log('✅ Seeding completed successfully!');
 }
