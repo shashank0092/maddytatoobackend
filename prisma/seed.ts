@@ -1034,6 +1034,101 @@ async function main() {
 
 
 
+  console.log('🌱 Seeding Feedback...');
+
+  const feedbacks = [
+    {
+      name: 'Rahul Patel',
+      rating: 5,
+      status: 'APPROVED',
+      is_featured: true,
+      is_verified: true,
+      consent_to_publish: true,
+      translations: {
+        en: "I absolutely loved my tattoo. Maddy understood exactly what I wanted.",
+        gu: "મને મારું ટેટૂ ખૂબ જ ગમ્યું. મેડીએ મને જે જોઈએ હતું તે બરાબર સમજ્યું."
+      },
+      media: [
+        { type: 'VIDEO', s3_key: 'feedback/testimonials/demo-video.mp4', mime: 'video/mp4' },
+        { type: 'IMAGE', s3_key: 'feedback/testimonials/demo-photo.webp', mime: 'image/webp' }
+      ]
+    },
+    {
+      name: 'Sneha Shah',
+      rating: 4,
+      status: 'PENDING',
+      is_featured: false,
+      is_verified: false,
+      consent_to_publish: true,
+      translations: {
+        en: "Great experience, very professional.",
+        gu: "સારો અનુભવ, ખૂબ વ્યાવસાયિક."
+      },
+      media: []
+    },
+    {
+      name: 'Amit Kumar',
+      rating: 2,
+      status: 'REJECTED',
+      is_featured: false,
+      is_verified: true,
+      consent_to_publish: false,
+      translations: {
+        en: "Not what I expected.",
+        gu: "મને જે અપેક્ષા હતી તેવું નથી."
+      },
+      media: []
+    },
+    {
+      name: 'Priya Desai',
+      rating: 5,
+      status: 'APPROVED',
+      is_featured: false,
+      is_verified: true,
+      consent_to_publish: true,
+      translations: {
+        en: "Amazing detail and healing process was smooth.",
+        gu: "અદભૂત વિગત અને રૂઝ આવવાની પ્રક્રિયા સરળ હતી."
+      },
+      media: [
+        { type: 'IMAGE', s3_key: 'feedback/testimonials/priya-photo.webp', mime: 'image/webp' }
+      ]
+    }
+  ];
+
+  for (const fb of feedbacks) {
+    const createdFeedback = await prisma.feedback.create({
+      data: {
+        name: fb.name,
+        rating: fb.rating,
+        status: fb.status as any,
+        is_featured: fb.is_featured,
+        is_verified: fb.is_verified,
+        consent_to_publish: fb.consent_to_publish,
+        published_at: fb.status === 'APPROVED' ? new Date() : null,
+      }
+    });
+
+    await prisma.feedbackTranslation.createMany({
+      data: [
+        { feedback_id: createdFeedback.id, language_code: 'en', content: fb.translations.en },
+        { feedback_id: createdFeedback.id, language_code: 'gu', content: fb.translations.gu }
+      ]
+    });
+
+    if (fb.media.length > 0) {
+      await prisma.feedbackMedia.createMany({
+        data: fb.media.map((m, index) => ({
+          feedback_id: createdFeedback.id,
+          media_type: m.type as any,
+          s3_key: m.s3_key,
+          mime_type: m.mime,
+          sort_order: index
+        }))
+      });
+    }
+  }
+
   console.log('✅ Seeding completed successfully!');
 }
 
