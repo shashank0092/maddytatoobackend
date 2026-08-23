@@ -15,7 +15,7 @@ const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
 router.use('/contents', contentRoutes);
-router.use('/blog', blogRoutes);
+router.use('/blogs', blogRoutes);
 router.use('/feedback', feedbackRoutes);
 router.use('/queries', queriesRoutes);
 router.use('/content-types', contentTypeRoutes);

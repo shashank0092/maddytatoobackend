@@ -402,3 +402,83 @@ model ContentSEOTranslation {
   @@index([language_code])
   @@map("content_seo_translations")
 }
+
+// -----------------------------------------------------------------------------
+// BLOG MODULE
+// -----------------------------------------------------------------------------
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Blog {
+  id           String     @id @default(uuid()) @db.Uuid
+  slug            String     @unique
+  status          BlogStatus @default(DRAFT)
+  author_name     String?
+  reading_time    Int?
+  cover_media_key String?
+  published_at    DateTime?  @db.Timestamptz()
+  created_at      DateTime   @default(now()) @db.Timestamptz()
+  updated_at      DateTime   @updatedAt @db.Timestamptz()
+
+  translations BlogTranslation[]
+  seo          BlogSeo?
+
+  @@index([status])
+  @@index([published_at])
+  @@map("blogs")
+}
+
+model BlogTranslation {
+  id            String   @id @default(uuid()) @db.Uuid
+  blog_id       String   @db.Uuid
+  language_code String
+  title         String
+  excerpt       String?
+  content       String
+  created_at    DateTime @default(now()) @db.Timestamptz()
+  updated_at    DateTime @updatedAt @db.Timestamptz()
+
+  blog Blog @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+
+  @@unique([blog_id, language_code])
+  @@index([language_code])
+  @@map("blog_translations")
+}
+
+model BlogSeo {
+  id            String   @id @default(uuid()) @db.Uuid
+  blog_id       String   @unique @db.Uuid
+  canonical_url String?
+  og_image_key  String?
+  created_at    DateTime @default(now()) @db.Timestamptz()
+  updated_at    DateTime @updatedAt @db.Timestamptz()
+
+  blog Blog @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+
+  translations BlogSeoTranslation[]
+
+  @@map("blog_seo")
+}
+
+model BlogSeoTranslation {
+  id               String   @id @default(uuid()) @db.Uuid
+  blog_seo_id      String   @db.Uuid
+  language_code    String
+  meta_title       String?
+  meta_description String?
+  keywords         String?
+  og_title         String?
+  og_description   String?
+  created_at       DateTime @default(now()) @db.Timestamptz()
+  updated_at       DateTime @updatedAt @db.Timestamptz()
+
+  blog_seo BlogSeo @relation(fields: [blog_seo_id], references: [id], onDelete: Cascade)
+
+  @@unique([blog_seo_id, language_code])
+  @@index([language_code])
+  @@map("blog_seo_translations")
+}
