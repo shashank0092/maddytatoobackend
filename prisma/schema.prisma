@@ -414,7 +414,7 @@ enum BlogStatus {
 }
 
 model Blog {
-  id           String     @id @default(uuid()) @db.Uuid
+  id              String     @id @default(uuid()) @db.Uuid
   slug            String     @unique
   status          BlogStatus @default(DRAFT)
   author_name     String?
@@ -481,4 +481,78 @@ model BlogSeoTranslation {
   @@unique([blog_seo_id, language_code])
   @@index([language_code])
   @@map("blog_seo_translations")
+}
+
+enum FeedbackStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+enum FeedbackMediaType {
+  VIDEO
+  IMAGE
+}
+
+model Feedback {
+  id                 String         @id @default(uuid()) @db.Uuid
+  name               String
+  email              String?
+  rating             Int
+  status             FeedbackStatus @default(PENDING)
+  is_featured        Boolean        @default(false)
+  is_verified        Boolean        @default(false)
+  consent_to_publish Boolean        @default(false)
+  submitted_at       DateTime       @default(now()) @db.Timestamptz()
+  published_at       DateTime?      @db.Timestamptz()
+  created_at         DateTime       @default(now()) @db.Timestamptz()
+  updated_at         DateTime       @updatedAt @db.Timestamptz()
+
+  translations FeedbackTranslation[]
+  media        FeedbackMedia[]
+
+  @@index([status])
+  @@index([is_featured])
+  @@index([is_verified])
+  @@index([published_at])
+  @@index([submitted_at])
+  @@map("feedback")
+}
+
+model FeedbackTranslation {
+  id            String @id @default(uuid()) @db.Uuid
+  feedback_id   String @db.Uuid
+  language_code String
+  content       String
+
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @updatedAt @db.Timestamptz()
+
+  feedback Feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade)
+
+  @@unique([feedback_id, language_code])
+  @@index([language_code])
+  @@map("feedback_translations")
+}
+
+model FeedbackMedia {
+  id          String            @id @default(uuid()) @db.Uuid
+  feedback_id String            @db.Uuid
+  media_type  FeedbackMediaType
+  s3_key      String
+  mime_type   String?
+  sort_order  Int               @default(0)
+  is_active   Boolean           @default(true)
+
+  created_at DateTime @default(now()) @db.Timestamptz()
+  updated_at DateTime @updatedAt @db.Timestamptz()
+
+  feedback Feedback @relation(fields: [feedback_id], references: [id], onDelete: Cascade)
+
+  @@index([feedback_id])
+  @@index([media_type])
+  @@index([is_active])
+  @@index([sort_order])
+  @@map("feedback_media")
 }
