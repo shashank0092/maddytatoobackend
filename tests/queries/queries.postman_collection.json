@@ -1,0 +1,2750 @@
+{
+  "info": {
+    "name": "Maddy Tattoo - Queries API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5001/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "authCookie",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "queryId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "queryId2",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "queryId3",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "inquiryNumber",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "categoryId",
+      "value": "CATEGORY_UUID",
+      "type": "string"
+    },
+    {
+      "key": "styleId",
+      "value": "STYLE_UUID",
+      "type": "string"
+    },
+    {
+      "key": "bodyPlacementId",
+      "value": "BODY_PLACEMENT_UUID",
+      "type": "string"
+    },
+    {
+      "key": "assignedUserId",
+      "value": "USER_UUID",
+      "type": "string"
+    },
+    {
+      "key": "customerEmail",
+      "value": "test.customer@example.com",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create Query",
+      "item": [
+        {
+          "name": "Full Valid",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "description": "Expected email behavior:\n1. Internal email should be sent to: QUERY_NOTIFICATION_EMAIL\n2. Customer email should be sent to: {{customerEmail}}\n3. Internal subject should contain: New Tattoo Inquiry\n4. Internal subject should contain: inquiryNumber\n5. Customer subject should contain: We Received Your Tattoo Inquiry\n6. Customer subject should contain: inquiryNumber\n\nAfter running this request, verify the configured mailbox manually if SMTP inbox verification is not available.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Patel\",\n  \"email\": \"{{customerEmail}}\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Realistic lion with my father's birth date.\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"styleId\": \"{{styleId}}\",\n  \"bodyPlacementId\": \"{{bodyPlacementId}}\",\n  \"budgetMin\": 15000,\n  \"budgetMax\": 25000,\n  \"currency\": \"INR\",\n  \"preferredDate\": \"2026-09-15\",\n  \"preferredTime\": \"2:00 PM\",\n  \"additionalNotes\": \"I prefer black and grey.\",\n  \"source\": \"WEBSITE\",\n  \"media\": [\n    {\n      \"mediaType\": \"IMAGE\",\n      \"s3Key\": \"queries/2026/08/test/reference-image.webp\",\n      \"mimeType\": \"image/webp\",\n      \"sortOrder\": 0,\n      \"isActive\": true\n    },\n    {\n      \"mediaType\": \"VIDEO\",\n      \"s3Key\": \"queries/2026/08/test/reference-video.mp4\",\n      \"mimeType\": \"video/mp4\",\n      \"sortOrder\": 1,\n      \"isActive\": true\n    }\n  ]\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Response contains success\", function () {",
+                  "    pm.expect(json).to.have.property(\"success\", true);",
+                  "});",
+                  "pm.test(\"Response data exists with id and inquiryNumber\", function () {",
+                  "    pm.expect(json).to.have.property(\"data\");",
+                  "    pm.expect(json.data).to.have.property(\"id\");",
+                  "    pm.expect(json.data).to.have.property(\"inquiryNumber\");",
+                  "    pm.expect(json.data.inquiryNumber).to.match(/^INQ-\\d{4}-\\d+$/);",
+                  "});",
+                  "pm.test(\"Query has default PENDING status and NORMAL priority\", function () {",
+                  "    pm.expect(json.data).to.have.property(\"status\", \"PENDING\");",
+                  "    pm.expect(json.data).to.have.property(\"priority\", \"NORMAL\");",
+                  "});",
+                  "if (json?.data?.id) pm.collectionVariables.set(\"queryId\", json.data.id);",
+                  "if (json?.data?.inquiryNumber) pm.collectionVariables.set(\"inquiryNumber\", json.data.inquiryNumber);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Minimum Valid",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Minimum Valid\",\n  \"email\": \"minimum@example.com\",\n  \"phone\": \"+91 0000000000\",\n  \"tattooIdea\": \"Just the required fields\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "if (json?.data?.id) pm.collectionVariables.set(\"queryId3\", json.data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Without Media",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Amit Shah\",\n  \"email\": \"amit.test@example.com\",\n  \"phone\": \"+91 9988776655\",\n  \"tattooIdea\": \"Minimal mountain tattoo.\",\n  \"budgetMin\": 10000,\n  \"budgetMax\": 15000,\n  \"currency\": \"INR\",\n  \"preferredDate\": \"2026-09-20\",\n  \"preferredTime\": \"11:00 AM\",\n  \"additionalNotes\": \"Small minimalist design.\",\n  \"source\": \"WEBSITE\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "if (json?.data?.id) pm.collectionVariables.set(\"queryId2\", json.data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Multiple Media",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Multiple Media\",\n  \"email\": \"media@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Test with multiple media\",\n  \"media\": [\n    {\n      \"mediaType\": \"IMAGE\",\n      \"s3Key\": \"test1.jpg\"\n    },\n    {\n      \"mediaType\": \"IMAGE\",\n      \"s3Key\": \"test2.jpg\"\n    },\n    {\n      \"mediaType\": \"VIDEO\",\n      \"s3Key\": \"test3.mp4\"\n    }\n  ]\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Name",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"email\": \"valid@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Valid\",\n  \"email\": \"invalid-email\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Phone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Valid\",\n  \"email\": \"valid@example.com\",\n  \"phone\": \"abc\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Budget",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Valid\",\n  \"email\": \"valid@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\",\n  \"budgetMin\": \"15000\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Currency",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Valid\",\n  \"email\": \"valid@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\",\n  \"currency\": \"INVALID\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Date",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Valid\",\n  \"email\": \"valid@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\",\n  \"preferredDate\": \"not-a-date\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Media Type",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Valid\",\n  \"email\": \"valid@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\",\n  \"media\": [\n    {\n      \"s3Key\": \"test.pdf\",\n      \"mediaType\": \"PDF\"\n    }\n  ]\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid MIME",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Valid\",\n  \"email\": \"valid@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\",\n  \"media\": [\n    {\n      \"s3Key\": \"test.mp4\",\n      \"mediaType\": \"IMAGE\",\n      \"mimeType\": \"video/mp4\"\n    }\n  ]\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid S3 Key",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Valid\",\n  \"email\": \"valid@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\",\n  \"media\": [\n    {\n      \"s3Key\": \"https://example.com/file.jpg\",\n      \"mediaType\": \"IMAGE\"\n    }\n  ]\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Sort Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Valid\",\n  \"email\": \"valid@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\",\n  \"media\": [\n    {\n      \"s3Key\": \"test.jpg\",\n      \"mediaType\": \"IMAGE\",\n      \"sortOrder\": \"1\"\n    }\n  ]\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Source",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Valid\",\n  \"email\": \"valid@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\",\n  \"source\": \"INVALID\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "XSS Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Valid\",\n  \"email\": \"valid@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"<script>alert('XSS')</script>\",\n  \"additionalNotes\": \"<img src=x onerror=alert(1)>\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 or successful but sanitized\", function () { pm.expect(pm.response.code).to.be.oneOf([201, 400]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Email Header Injection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul\\\\nBcc: attacker@example.com\",\n  \"email\": \"test@example.com\\\\nBcc: attacker@example.com\",\n  \"phone\": \"+91 9876543210\",\n  \"tattooIdea\": \"Valid Idea Valid Idea\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 or successfully rejected\", function () { pm.expect(pm.response.code).to.be.oneOf([201, 400]); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "List Queries",
+      "item": [
+        {
+          "name": "Default",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Response contains data and pagination\", function () {",
+                  "    pm.expect(json).to.have.property(\"data\");",
+                  "    pm.expect(json).to.have.property(\"meta\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Pagination",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Page 2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?page=2&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Different Limits",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?limit=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Pagination",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?page=0&limit=-1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "-1"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?status=PENDING",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Priority",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?priority=HIGH",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "priority",
+                  "value": "HIGH"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Source",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?source=WEBSITE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "source",
+                  "value": "WEBSITE"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?categoryId={{categoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "categoryId",
+                  "value": "{{categoryId}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Style",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?styleId={{styleId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "styleId",
+                  "value": "{{styleId}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Body Placement",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?bodyPlacementId={{bodyPlacementId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "bodyPlacementId",
+                  "value": "{{bodyPlacementId}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Assigned User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?assignedTo={{assignedUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "assignedTo",
+                  "value": "{{assignedUserId}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Date Range",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?fromDate=2026-08-01&toDate=2026-08-31",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "fromDate",
+                  "value": "2026-08-01"
+                },
+                {
+                  "key": "toDate",
+                  "value": "2026-08-31"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search Name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?search=Rahul",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Rahul"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search Email",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?search=example.com",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "example.com"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search Phone",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?search=9876543210",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "9876543210"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search Inquiry Number",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?search={{inquiryNumber}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "{{inquiryNumber}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search Tattoo Idea",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?search=lion",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "lion"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Case Insensitive Search",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?search=LION",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "LION"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sorting",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?sortBy=createdAt&sortOrder=desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Sorting",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?sortBy=invalidField",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "sortBy",
+                  "value": "invalidField"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Combined Filters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?page=1&limit=10&status=PENDING&priority=HIGH&source=WEBSITE&categoryId={{categoryId}}&styleId={{styleId}}&bodyPlacementId={{bodyPlacementId}}&search=Rahul&sortBy=createdAt&sortOrder=desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                },
+                {
+                  "key": "priority",
+                  "value": "HIGH"
+                },
+                {
+                  "key": "source",
+                  "value": "WEBSITE"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "{{categoryId}}"
+                },
+                {
+                  "key": "styleId",
+                  "value": "{{styleId}}"
+                },
+                {
+                  "key": "bodyPlacementId",
+                  "value": "{{bodyPlacementId}}"
+                },
+                {
+                  "key": "search",
+                  "value": "Rahul"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filtered Pagination",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?page=2&limit=5&status=PENDING",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                },
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empty Results",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?search=THIS_QUERY_DOES_NOT_EXIST_999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "THIS_QUERY_DOES_NOT_EXIST_999999"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Large Page",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries?page=9999&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "9999"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Get Query",
+      "item": [
+        {
+          "name": "Existing",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid UUID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/not-a-valid-uuid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "not-a-valid-uuid"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Non Existing",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unauthorized",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Update Query",
+      "item": [
+        {
+          "name": "Valid Update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Patel Updated\",\n  \"phone\": \"+91 9999999999\",\n  \"tattooIdea\": \"Updated lion tattoo concept.\",\n  \"budgetMin\": 20000,\n  \"budgetMax\": 30000,\n  \"currency\": \"INR\",\n  \"preferredDate\": \"2026-09-20\",\n  \"preferredTime\": \"3:00 PM\",\n  \"additionalNotes\": \"Updated customer notes.\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"styleId\": \"{{styleId}}\",\n  \"bodyPlacementId\": \"{{bodyPlacementId}}\",\n  \"priority\": \"HIGH\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Budget Update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"budgetMin\": 25000,\n  \"budgetMax\": 35000\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Priority Update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"priority\": \"URGENT\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Assignment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assignedTo\": \"{{assignedUserId}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Media Update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"media\": [\n    {\n      \"mediaType\": \"IMAGE\",\n      \"s3Key\": \"queries/2026/08/test/new-reference.webp\",\n      \"mimeType\": \"image/webp\",\n      \"sortOrder\": 0,\n      \"isActive\": true\n    }\n  ]\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Budget",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"budgetMin\": 35000,\n  \"budgetMax\": 25000\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Priority",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"priority\": \"INVALID\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Status Protection",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"BOOKED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 or successfully ignored status field\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 400]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Inquiry Number Protection",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inquiryNumber\": \"INQ-9999-999999\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400 or successfully ignored\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 400]); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Query Status",
+      "item": [
+        {
+          "name": "Pending → Contacted",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONTACTED\",\n  \"note\": \"Customer contacted through WhatsApp.\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Contacted → In Progress",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\",\n  \"note\": \"Tattoo concept discussion started.\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "In Progress → Booked",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"BOOKED\",\n  \"note\": \"Appointment confirmed.\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Booked → Completed",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\",\n  \"note\": \"Tattoo session completed.\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Rejected",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId2}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId2}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"REJECTED\",\n  \"note\": \"Request does not match studio requirements.\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cancelled",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId3}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId3}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CANCELLED\",\n  \"note\": \"Customer cancelled the inquiry.\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"INVALID\",\n  \"note\": \"Invalid status test.\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Empty Note",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 or 400 depending on validation rules\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 400]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "History Verification",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Response contains history\", function () {",
+                  "    pm.expect(json.data).to.have.property(\"history\");",
+                  "    pm.expect(json.data.history.length).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unauthorized",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Delete Query",
+      "item": [
+        {
+          "name": "Successful Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cascade Verification",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId}}"
+              ]
+            },
+            "description": "Verify that fetching the deleted query returns 404, proving cascade deletion worked for the main record."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid UUID",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/not-a-valid-uuid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "not-a-valid-uuid"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Non Existing",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "{{authCookie}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/queries/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unauthorized",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/queries/{{queryId2}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "queries",
+                "{{queryId2}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

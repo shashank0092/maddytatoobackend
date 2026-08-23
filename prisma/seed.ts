@@ -1129,6 +1129,195 @@ async function main() {
     }
   }
 
+  console.log('🌱 Seeding Queries...');
+
+  // Create a mock admin user for assignment and history
+  const adminUser = await prisma.user.upsert({
+    where: { email: 'admin@maddytattoo.com' },
+    update: {},
+    create: {
+      email: 'admin@maddytattoo.com',
+      password_hash: 'mock-hash',
+      first_name: 'Maddy',
+      last_name: 'Admin',
+    }
+  });
+
+  const queryScenarios = [
+    {
+      inquiry_number: 'INQ-2026-000001',
+      name: 'John Doe',
+      email: 'john@example.com',
+      phone: '+91 9876543210',
+      tattoo_idea: 'I want a realism portrait of my dog.',
+      budget_min: 10000,
+      budget_max: 20000,
+      status: 'PENDING',
+      priority: 'NORMAL',
+      source: 'WEBSITE',
+      category_id: categorySpiritual?.id,
+      style_id: styleRealism?.id,
+      body_placement_id: bodyPlacementForearm?.id,
+      preferred_date: new Date('2026-10-15'),
+      preferred_time: 'Morning',
+      media: [{ type: 'IMAGE', s3_key: 'queries/2026/08/uuid/dog-reference.jpg', mime: 'image/jpeg' }],
+      history: [
+        { action: 'CREATED', new_status: 'PENDING', note: 'Customer submitted inquiry via website' }
+      ]
+    },
+    {
+      inquiry_number: 'INQ-2026-000002',
+      name: 'Sarah Smith',
+      email: 'sarah@example.com',
+      phone: '+1 555-0123',
+      tattoo_idea: 'Minimalist spiritual symbol on wrist.',
+      status: 'CONTACTED',
+      priority: 'LOW',
+      source: 'INSTAGRAM',
+      category_id: categorySpiritual?.id,
+      assigned_to: adminUser.id,
+      media: [],
+      history: [
+        { action: 'CREATED', new_status: 'PENDING' },
+        { action: 'STATUS_CHANGED', old_status: 'PENDING', new_status: 'CONTACTED', note: 'Messaged on Instagram' }
+      ]
+    },
+    {
+      inquiry_number: 'INQ-2026-000003',
+      name: 'Mike Johnson',
+      email: 'mike@example.com',
+      phone: '+44 7700 900077',
+      tattoo_idea: 'Full sleeve Mahadev design',
+      budget_min: 50000,
+      budget_max: 80000,
+      status: 'IN_PROGRESS',
+      priority: 'HIGH',
+      source: 'WHATSAPP',
+      assigned_to: adminUser.id,
+      media: [{ type: 'VIDEO', s3_key: 'queries/2026/08/uuid/design-video.mp4', mime: 'video/mp4' }],
+      history: [
+        { action: 'CREATED', new_status: 'PENDING' },
+        { action: 'STATUS_CHANGED', old_status: 'PENDING', new_status: 'IN_PROGRESS', note: 'Consultation scheduled' }
+      ]
+    },
+    {
+      inquiry_number: 'INQ-2026-000004',
+      name: 'Emma Davis',
+      email: 'emma@example.com',
+      phone: '+91 9998887776',
+      tattoo_idea: 'Custom mandala',
+      status: 'BOOKED',
+      priority: 'NORMAL',
+      source: 'REFERRAL',
+      assigned_to: adminUser.id,
+      media: [],
+      history: [
+        { action: 'CREATED', new_status: 'PENDING' },
+        { action: 'STATUS_CHANGED', old_status: 'IN_PROGRESS', new_status: 'BOOKED', note: 'Deposit received' }
+      ]
+    },
+    {
+      inquiry_number: 'INQ-2026-000005',
+      name: 'David Wilson',
+      email: 'david@example.com',
+      phone: '+91 8887776665',
+      tattoo_idea: 'Cover up old tattoo',
+      status: 'COMPLETED',
+      priority: 'NORMAL',
+      source: 'WEBSITE',
+      assigned_to: adminUser.id,
+      media: [],
+      closed: true,
+      history: [
+        { action: 'CREATED', new_status: 'PENDING' },
+        { action: 'STATUS_CHANGED', old_status: 'BOOKED', new_status: 'COMPLETED', note: 'Session completed successfully' }
+      ]
+    },
+    {
+      inquiry_number: 'INQ-2026-000006',
+      name: 'Lisa Brown',
+      email: 'lisa@example.com',
+      phone: '+91 7776665554',
+      tattoo_idea: 'Tiny heart',
+      status: 'CANCELLED',
+      priority: 'LOW',
+      source: 'OTHER',
+      closed: true,
+      media: [],
+      history: [
+        { action: 'CREATED', new_status: 'PENDING' },
+        { action: 'STATUS_CHANGED', old_status: 'PENDING', new_status: 'CANCELLED', note: 'Customer cancelled' }
+      ]
+    },
+    {
+      inquiry_number: 'INQ-2026-000007',
+      name: 'Tom Miller',
+      email: 'tom@example.com',
+      phone: '+91 6665554443',
+      tattoo_idea: 'Offensive design',
+      status: 'REJECTED',
+      priority: 'LOW',
+      source: 'WEBSITE',
+      closed: true,
+      media: [],
+      history: [
+        { action: 'CREATED', new_status: 'PENDING' },
+        { action: 'STATUS_CHANGED', old_status: 'PENDING', new_status: 'REJECTED', note: 'Design policy violation' }
+      ]
+    }
+  ];
+
+  for (const q of queryScenarios) {
+    const queryRecord = await prisma.query.upsert({
+      where: { inquiry_number: q.inquiry_number },
+      update: {},
+      create: {
+        inquiry_number: q.inquiry_number,
+        name: q.name,
+        email: q.email,
+        phone: q.phone,
+        tattoo_idea: q.tattoo_idea,
+        budget_min: q.budget_min,
+        budget_max: q.budget_max,
+        status: q.status as any,
+        priority: q.priority as any,
+        source: q.source as any,
+        category_id: q.category_id,
+        style_id: q.style_id,
+        body_placement_id: q.body_placement_id,
+        preferred_date: q.preferred_date,
+        preferred_time: q.preferred_time,
+        assigned_to: q.assigned_to,
+        closed_at: q.closed ? new Date() : null
+      }
+    });
+
+    if (q.media && q.media.length > 0) {
+      await prisma.queryMedia.createMany({
+        data: q.media.map((m, idx) => ({
+          query_id: queryRecord.id,
+          media_type: m.type as any,
+          s3_key: m.s3_key,
+          mime_type: m.mime,
+          sort_order: idx
+        }))
+      });
+    }
+
+    if (q.history && q.history.length > 0) {
+      await prisma.queryHistory.createMany({
+        data: q.history.map(h => ({
+          query_id: queryRecord.id,
+          action: h.action,
+          old_status: h.old_status as any,
+          new_status: h.new_status as any,
+          note: h.note,
+          created_by: adminUser.id
+        }))
+      });
+    }
+  }
+
   console.log('✅ Seeding completed successfully!');
 }
 
