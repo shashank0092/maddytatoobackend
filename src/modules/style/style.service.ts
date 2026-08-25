@@ -45,9 +45,7 @@ export class StyleService {
         skip,
         take,
         include: {
-          translations: {
-            where: { language_code: { in: [lang, 'en'] } },
-          },
+          translations: true,
         },
       }),
       prisma.style.count({ where }),
@@ -67,6 +65,12 @@ export class StyleService {
         altText: translation?.alt_text || null,
         coverImageKey: col.cover_image_key,
         isActive: col.is_active,
+        translations: col.translations.map((t) => ({
+          languageCode: t.language_code,
+          name: t.name,
+          description: t.description,
+          altText: t.alt_text,
+        })),
       };
     });
 
@@ -87,9 +91,7 @@ export class StyleService {
     const col = await prisma.style.findFirst({
       where,
       include: {
-        translations: {
-          where: { language_code: { in: [lang, 'en'] } },
-        },
+        translations: true,
       },
     });
 
@@ -110,6 +112,12 @@ export class StyleService {
       altText: translation?.alt_text || null,
       coverImageKey: col.cover_image_key,
       isActive: col.is_active,
+      translations: col.translations.map((t) => ({
+        languageCode: t.language_code,
+        name: t.name,
+        description: t.description,
+        altText: t.alt_text,
+      })),
     };
   }
 
