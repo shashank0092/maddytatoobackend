@@ -45,9 +45,7 @@ export class BodyPlacementService {
         skip,
         take,
         include: {
-          translations: {
-            where: { language_code: { in: [lang, 'en'] } },
-          },
+          translations: true,
         },
       }),
       prisma.bodyPlacement.count({ where }),
@@ -67,6 +65,12 @@ export class BodyPlacementService {
         altText: translation?.alt_text || null,
         coverImageKey: bp.cover_image_key,
         isActive: bp.is_active,
+        translations: bp.translations.map((t) => ({
+          languageCode: t.language_code,
+          name: t.name,
+          description: t.description,
+          altText: t.alt_text,
+        })),
       };
     });
 
@@ -87,9 +91,7 @@ export class BodyPlacementService {
     const bp = await prisma.bodyPlacement.findFirst({
       where,
       include: {
-        translations: {
-          where: { language_code: { in: [lang, 'en'] } },
-        },
+        translations: true,
       },
     });
 
@@ -110,6 +112,12 @@ export class BodyPlacementService {
       altText: translation?.alt_text || null,
       coverImageKey: bp.cover_image_key,
       isActive: bp.is_active,
+      translations: bp.translations.map((t) => ({
+        languageCode: t.language_code,
+        name: t.name,
+        description: t.description,
+        altText: t.alt_text,
+      })),
     };
   }
 
