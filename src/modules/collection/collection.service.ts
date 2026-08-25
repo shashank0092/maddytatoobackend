@@ -45,9 +45,7 @@ export class CollectionService {
         skip,
         take,
         include: {
-          translations: {
-            where: { language_code: { in: [lang, 'en'] } },
-          },
+          translations: true,
         },
       }),
       prisma.collection.count({ where }),
@@ -67,6 +65,12 @@ export class CollectionService {
         altText: translation?.alt_text || null,
         coverImageKey: col.cover_image_key,
         isActive: col.is_active,
+        translations: col.translations.map((t) => ({
+          languageCode: t.language_code,
+          name: t.name,
+          description: t.description,
+          altText: t.alt_text,
+        })),
       };
     });
 
@@ -87,9 +91,7 @@ export class CollectionService {
     const col = await prisma.collection.findFirst({
       where,
       include: {
-        translations: {
-          where: { language_code: { in: [lang, 'en'] } },
-        },
+        translations: true,
       },
     });
 
@@ -110,6 +112,12 @@ export class CollectionService {
       altText: translation?.alt_text || null,
       coverImageKey: col.cover_image_key,
       isActive: col.is_active,
+      translations: col.translations.map((t) => ({
+        languageCode: t.language_code,
+        name: t.name,
+        description: t.description,
+        altText: t.alt_text,
+      })),
     };
   }
 
