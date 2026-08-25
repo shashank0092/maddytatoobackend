@@ -47,9 +47,7 @@ export class TagService {
         skip,
         take,
         include: {
-          translations: {
-            where: { language_code: { in: [lang, 'en'] } },
-          },
+          translations: true,
         },
       }),
       prisma.tag.count({ where }),
@@ -66,6 +64,10 @@ export class TagService {
         slug: t.slug,
         name: translation?.name || '',
         isActive: t.is_active,
+        translations: t.translations.map((tr) => ({
+          languageCode: tr.language_code,
+          name: tr.name,
+        })),
       };
     });
 
@@ -86,9 +88,7 @@ export class TagService {
     const tag = await prisma.tag.findFirst({
       where,
       include: {
-        translations: {
-          where: { language_code: { in: [lang, 'en'] } },
-        },
+        translations: true,
       },
     });
 
@@ -106,6 +106,10 @@ export class TagService {
       slug: tag.slug,
       name: translation?.name || '',
       isActive: tag.is_active,
+      translations: tag.translations.map((tr) => ({
+        languageCode: tr.language_code,
+        name: tr.name,
+      })),
     };
   }
 
