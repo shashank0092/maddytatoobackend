@@ -72,7 +72,7 @@ export class ContentService {
         skip,
         take,
         include: {
-          translations: { where: { language_code: { in: [lang, 'en'] } } },
+          translations: true,
           media: { where: { role: 'COVER', is_active: true }, take: 1, orderBy: { sort_order: 'asc' } },
           content_type: { include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
           category: { include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
@@ -108,6 +108,11 @@ export class ContentService {
           const tTrans = ct.tag.translations.find(t => t.language_code === lang) || ct.tag.translations.find(t => t.language_code === 'en');
           return { slug: ct.tag.slug, name: tTrans?.name || '' };
         }),
+        translations: c.translations.map((t) => ({
+          languageCode: t.language_code,
+          title: t.title,
+          shortDescription: t.short_description,
+        })),
         ...(isAdmin ? { status: c.status, publishedAt: c.published_at } : {})
       };
     });
@@ -128,7 +133,7 @@ export class ContentService {
     const c = await prisma.content.findFirst({
       where,
       include: {
-        translations: { where: { language_code: { in: [lang, 'en'] } } },
+        translations: true,
         media: { orderBy: { sort_order: 'asc' } },
         content_type: { include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
         category: { include: { translations: { where: { language_code: { in: [lang, 'en'] } } } } },
@@ -192,6 +197,16 @@ export class ContentService {
         ogTitle: seoTranslation?.og_title || null,
         ogDescription: seoTranslation?.og_description || null,
       } : null,
+      translations: c.translations.map((t) => ({
+        languageCode: t.language_code,
+        title: t.title,
+        shortDescription: t.short_description,
+        description: t.description,
+        story: t.story,
+        inspiration: t.inspiration,
+        meaning: t.meaning,
+        process: t.process,
+      })),
     };
   }
 
