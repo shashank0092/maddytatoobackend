@@ -22,6 +22,10 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().url(),
 
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+
+  AWS_REGION: z.string().min(1, 'AWS_REGION is required'),
+  AWS_IDENTITY_POOL_ID: z.string().min(1, 'AWS_IDENTITY_POOL_ID is required'),
+  AWS_DEVELOPER_PROVIDER_NAME: z.string().min(1, 'AWS_DEVELOPER_PROVIDER_NAME is required'),
 });
 
 const _env = envSchema.safeParse(process.env);

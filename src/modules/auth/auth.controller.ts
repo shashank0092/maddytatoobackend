@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { loginAdmin } from './auth.service';
 import { successResponse } from '../../core/utils/responseFormat';
 import { env } from '../../config/env';
+import { cognitoService } from '../../services/cognito.service';
 
 const setAuthCookie = (res: Response, token: string) => {
   res.cookie(env.AUTH_COOKIE_NAME, token, {
@@ -39,6 +40,21 @@ export const logout = async (req: Request, res: Response, next: NextFunction) =>
   try {
     clearAuthCookie(res);
     res.status(200).json(successResponse({ message: 'Logged out successfully' }));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAwsCredentials = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      throw new Error('User ID is missing from request'); // Should not happen with requireAuth
+    }
+
+    const credentials = await cognitoService.getDeveloperIdentity(userId);
+
+    res.status(200).json(successResponse(credentials));
   } catch (error) {
     next(error);
   }

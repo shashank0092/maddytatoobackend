@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
-import { login, logout } from './auth.controller';
+import { login, logout, getAwsCredentials } from './auth.controller';
 import { validateRequest } from '../../core/middleware/validateRequest';
+import { requireAuth } from '../../core/middleware/requireAuth';
 import { loginSchema } from './auth.validation';
 import { errorResponse } from '../../core/utils/responseFormat';
 import { env } from '../../config/env';
@@ -23,5 +24,6 @@ const loginLimiter = rateLimit({
 // Auth endpoints
 router.post('/login', loginLimiter, validateRequest(loginSchema), login);
 router.post('/logout', logout);
+router.get('/aws-credentials', requireAuth, getAwsCredentials);
 
 export default router;
