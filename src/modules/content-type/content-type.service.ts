@@ -95,14 +95,18 @@ export class ContentTypeService {
     const ct = await prisma.contentType.findFirst({
       where,
       include: {
-        translations: {
-          where: { language_code: { in: [lang, 'en'] } },
-        },
+        translations: isAdmin
+          ? true
+          : { where: { language_code: { in: [lang, 'en'] } } },
       },
     });
 
     if (!ct) {
       throw new NotFoundError('Content Type not found');
+    }
+
+    if (isAdmin) {
+      return this.formatAdminResponse(ct as any);
     }
 
     const translation =
