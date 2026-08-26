@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { QuerySource } from '@prisma/client';
+import { QuerySource, QueryStatus, QueryPriority } from '@prisma/client';
 
 export const createQuerySchema = z.object({
   body: z.object({
@@ -34,3 +34,49 @@ export const createQuerySchema = z.object({
 });
 
 export type CreateQueryInput = z.infer<typeof createQuerySchema>['body'];
+
+export const queryQuerySchema = z.object({
+  query: z.object({
+    page: z.string().regex(/^\d+$/).optional().transform(Number),
+    limit: z.string().regex(/^\d+$/).optional().transform(Number),
+    search: z.string().optional(),
+    status: z.nativeEnum(QueryStatus).optional(),
+    priority: z.nativeEnum(QueryPriority).optional(),
+    sort: z.string().optional(),
+    sortOrder: z.enum(['asc', 'desc']).optional()
+  })
+});
+
+export type QueryQueryDTO = z.infer<typeof queryQuerySchema>['query'];
+
+export const queryIdParamSchema = z.object({
+  params: z.object({
+    id: z.string().uuid('Invalid query ID format'),
+  }),
+});
+
+export const updateQueryStatusSchema = z.object({
+  params: z.object({
+    id: z.string().uuid('Invalid query ID format'),
+  }),
+  body: z.object({
+    status: z.nativeEnum(QueryStatus),
+    note: z.string().optional()
+  })
+});
+
+export type UpdateQueryStatusDTO = z.infer<typeof updateQueryStatusSchema>['body'];
+
+// Optional schema for basic query info updates by admin if needed
+export const updateQuerySchema = z.object({
+  params: z.object({
+    id: z.string().uuid('Invalid query ID format'),
+  }),
+  body: z.object({
+    assigned_to: z.string().uuid().optional().nullable(),
+    priority: z.nativeEnum(QueryPriority).optional(),
+    additional_notes: z.string().optional().nullable(),
+  })
+});
+
+export type UpdateQueryDTO = z.infer<typeof updateQuerySchema>['body'];

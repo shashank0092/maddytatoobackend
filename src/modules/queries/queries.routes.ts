@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import { queryController } from './query.controller';
+import { requireAuth } from '../../core/middleware/requireAuth';
 
 const router = Router();
 
 // Public routes
 router.post('/', queryController.create);
 
-// The following routes will be implemented later and should be protected by authentication
+// Admin routes
+router.use(requireAuth);
 router.get('/', queryController.list);
 router.get('/:id', queryController.getById);
 router.patch('/:id', queryController.update);

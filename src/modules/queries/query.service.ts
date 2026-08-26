@@ -1,5 +1,7 @@
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../config/database';
-import { CreateQueryInput } from './query.validation';
+import { CreateQueryInput, QueryQueryDTO, UpdateQueryStatusDTO, UpdateQueryDTO } from './query.validation';
+import { NotFoundError } from '../../core/errors/AppError';
 import { emailService } from '../../services/email/email.service';
 import { QueryEmailData, QueryConfirmationEmailData } from '../../services/email/email.types';
 
@@ -116,6 +118,153 @@ export class QueryService {
       emailService.sendQueryInternalNotification(internalEmailData),
       emailService.sendQueryCustomerConfirmation(customerEmailData, query.email)
     ]);
+  }
+
+  async getAll(query: QueryQueryDTO) {
+    const { page = 1, limit = 10, search, status, priority, sort, sortOrder = 'desc' } = query;
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.QueryWhereInput = {};
+
+    if (status) where.status = status;
+    if (priority) where.priority = priority;
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { phone: { contains: search, mode: 'insensitive' } },
+        { inquiry_number: { contains: search, mode: 'insensitive' } }
+      ];
+    }
+
+    const orderBy: Prisma.QueryOrderByWithRelationInput[] = [];
+    if (sort) {
+      if (sort === 'created_at') orderBy.push({ created_at: sortOrder });
+      else if (sort === 'priority') orderBy.push({ priority: sortOrder });
+      else if (sort === 'preferred_date') orderBy.push({ preferred_date: sortOrder });
+      else orderBy.push({ created_at: 'desc' });
+    } else {
+      orderBy.push({ created_at: 'desc' });
+    }
+
+    const [total, queries] = await prisma.$transaction([
+      prisma.query.count({ where }),
+      prisma.query.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy,
+        include: {
+          category: { include: { translations: { select: { language_code: true, name: true } } } },
+          style: { include: { translations: { select: { language_code: true, name: true } } } },
+        }
+      })
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data: queries,
+      meta: {
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        }
+      }
+    };
+  }
+
+  async getById(id: string) {
+    const query = await prisma.query.findUnique({
+      where: { id },
+      include: {
+        media: true,
+        history: {
+          orderBy: { created_at: 'desc' },
+          include: { created_user: { select: { first_name: true, last_name: true, email: true } } }
+        },
+        category: { include: { translations: true } },
+        style: { include: { translations: true } },
+        body_placement: { include: { translations: true } },
+        assigned_user: { select: { id: true, first_name: true, last_name: true } }
+      }
+    });
+
+    if (!query) throw new NotFoundError('Query not found');
+    return query;
+  }
+
+  async updateStatus(id: string, data: UpdateQueryStatusDTO, userId: string) {
+    const query = await prisma.query.findUnique({ where: { id } });
+    if (!query) throw new NotFoundError('Query not found');
+
+    const updated = await prisma.$transaction(async (tx) => {
+      const q = await tx.query.update({
+        where: { id },
+        data: {
+          status: data.status,
+          ...(data.status === 'COMPLETED' || data.status === 'REJECTED' || data.status === 'CANCELLED' 
+            ? { closed_at: new Date() } 
+            : { closed_at: null }),
+        }
+      });
+
+      await tx.queryHistory.create({
+        data: {
+          query_id: id,
+          action: 'STATUS_UPDATED',
+          old_status: query.status,
+          new_status: data.status,
+          note: data.note,
+          created_by: userId
+        }
+      });
+
+      return q;
+    });
+
+    return updated;
+  }
+
+  async update(id: string, data: UpdateQueryDTO, userId: string) {
+    const query = await prisma.query.findUnique({ where: { id } });
+    if (!query) throw new NotFoundError('Query not found');
+
+    const updated = await prisma.$transaction(async (tx) => {
+      const q = await tx.query.update({
+        where: { id },
+        data: {
+          ...(data.assigned_to !== undefined && { assigned_to: data.assigned_to }),
+          ...(data.priority !== undefined && { priority: data.priority }),
+          ...(data.additional_notes !== undefined && { additional_notes: data.additional_notes }),
+        }
+      });
+
+      await tx.queryHistory.create({
+        data: {
+          query_id: id,
+          action: 'QUERY_UPDATED',
+          note: 'Query details updated by admin',
+          created_by: userId
+        }
+      });
+
+      return q;
+    });
+
+    return updated;
+  }
+
+  async delete(id: string) {
+    const query = await prisma.query.findUnique({ where: { id } });
+    if (!query) throw new NotFoundError('Query not found');
+
+    await prisma.query.delete({ where: { id } });
+    return { success: true };
   }
 }
 

@@ -339,11 +339,27 @@ model ContentMedia {
   updated_at DateTime  @updatedAt @db.Timestamptz()
 
   content Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
+  translations ContentMediaTranslation[]
 
   @@index([content_id])
   @@index([content_id, role])
   @@index([content_id, sort_order])
   @@map("content_media")
+}
+
+model ContentMediaTranslation {
+  id            String   @id @default(uuid()) @db.Uuid
+  media_id      String   @db.Uuid
+  language_code String
+  alt_text      String?
+  created_at    DateTime @default(now()) @db.Timestamptz()
+  updated_at    DateTime @updatedAt @db.Timestamptz()
+
+  media ContentMedia @relation(fields: [media_id], references: [id], onDelete: Cascade)
+
+  @@unique([media_id, language_code])
+  @@index([language_code])
+  @@map("content_media_translations")
 }
 
 model ContentTag {
