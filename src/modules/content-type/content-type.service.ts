@@ -8,6 +8,7 @@ import {
   UpdateContentTypeDTO,
 } from './content-type.types';
 import { parsePaginationQuery, createPaginationMeta } from '../../shared/pagination/pagination.utils';
+import { sanitizeBlogHtml } from '../blog/blog.utils';
 
 export class ContentTypeService {
   async getAll(query: ContentTypeQueryDTO, isAdmin: boolean = false) {
@@ -149,7 +150,7 @@ export class ContentTypeService {
         content_type_id: contentType.id,
         language_code: 'en',
         name: data.translations.en.name,
-        description: data.translations.en.description,
+        description: data.translations.en.description ? sanitizeBlogHtml(data.translations.en.description) : data.translations.en.description,
         alt_text: data.translations.en.altText,
       });
 
@@ -158,7 +159,7 @@ export class ContentTypeService {
           content_type_id: contentType.id,
           language_code: 'gu',
           name: data.translations.gu.name,
-          description: data.translations.gu.description,
+          description: data.translations.gu.description ? sanitizeBlogHtml(data.translations.gu.description) : data.translations.gu.description,
           alt_text: data.translations.gu.altText,
         });
       }
@@ -211,14 +212,14 @@ export class ContentTypeService {
               },
               update: {
                 ...(tData.name !== undefined && { name: tData.name }),
-                ...(tData.description !== undefined && { description: tData.description }),
+                ...(tData.description !== undefined && { description: tData.description ? sanitizeBlogHtml(tData.description) : tData.description }),
                 ...(tData.altText !== undefined && { alt_text: tData.altText }),
               },
               create: {
                 content_type_id: id,
                 language_code: lang,
                 name: tData.name!,
-                description: tData.description,
+                description: tData.description ? sanitizeBlogHtml(tData.description) : tData.description,
                 alt_text: tData.altText,
               },
             });
