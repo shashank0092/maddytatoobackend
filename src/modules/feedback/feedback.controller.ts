@@ -32,7 +32,7 @@ export class FeedbackController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const validatedData = feedbackListQuerySchema.parse({ query: req.query });
-      const isAdmin = (req as any).user?.role === 'ADMIN';
+      const isAdmin = !!(req as any).user && req.query.isAdmin === 'true';
       const result = await feedbackService.getAll(validatedData.query, isAdmin);
       res.json(listResponse(result.data as any[], result.pagination));
     } catch (error) {
@@ -47,7 +47,7 @@ export class FeedbackController {
   async getById(req: Request, res: Response, next: NextFunction) {
     try {
       const { params } = feedbackIdParamSchema.parse({ params: req.params });
-      const isAdmin = (req as any).user?.role === 'ADMIN';
+      const isAdmin = !!(req as any).user && req.query.isAdmin === 'true';
       const language = (req.query.language as string) || 'en';
       
       const result = await feedbackService.getById(params.id, isAdmin, language);

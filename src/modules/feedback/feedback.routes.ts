@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { requireAuth } from '../../core/middleware/requireAuth';
+import { optionalAuth } from '../../core/middleware/optionalAuth';
 import { validateRequest } from '../../core/middleware/validateRequest';
 import { feedbackController } from './feedback.controller';
 import {
@@ -13,10 +14,10 @@ import {
 
 const router = Router();
 
-// Public Routes
+// Public/Optional Admin Routes
 router.post('/', validateRequest(createFeedbackSchema), feedbackController.create);
-router.get('/', validateRequest(feedbackListQuerySchema), feedbackController.getAll);
-router.get('/:id', validateRequest(feedbackIdParamSchema), feedbackController.getById);
+router.get('/', optionalAuth, validateRequest(feedbackListQuerySchema), feedbackController.getAll);
+router.get('/:id', optionalAuth, validateRequest(feedbackIdParamSchema), feedbackController.getById);
 
 // Admin Routes
 router.use(requireAuth);
