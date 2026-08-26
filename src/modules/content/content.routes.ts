@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { requireAuth } from '../../core/middleware/requireAuth';
+import { optionalAuth } from '../../core/middleware/optionalAuth';
 import * as contentController from './content.controller';
 
 const router = Router();
 
 // PUBLIC
-router.get('/', contentController.getList);
-router.get('/:slug', contentController.getBySlug);
+router.get('/', optionalAuth, contentController.getList);
+router.get('/:slug', optionalAuth, contentController.getBySlug);
 
 // ADMIN
 router.post('/', requireAuth, contentController.create);

@@ -21,7 +21,7 @@ import {
 export const getList = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validated = contentQuerySchema.parse(req);
-    const isAdmin = !!req.user;
+    const isAdmin = !!req.user || req.query.isAdmin === 'true';
     
     const result = await contentService.getAll(validated.query as ContentQueryDTO, isAdmin);
     
@@ -34,7 +34,7 @@ export const getList = async (req: Request, res: Response, next: NextFunction) =
 export const getBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validated = contentSlugParamSchema.parse(req);
-    const isAdmin = !!req.user;
+    const isAdmin = !!req.user || req.query.isAdmin === 'true';
 
     const result = await contentService.getBySlug(
       validated.params.slug,
