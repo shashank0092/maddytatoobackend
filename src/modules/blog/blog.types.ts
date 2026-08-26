@@ -8,6 +8,7 @@ export interface BlogQueryDTO {
   language?: SupportedLanguage;
   search?: string;
   status?: BlogStatus;
+  isFeatured?: boolean | string;
   sortBy?: 'createdAt' | 'updatedAt' | 'publishedAt' | 'title' | 'readingTime';
   sortOrder?: 'asc' | 'desc';
 }
@@ -20,6 +21,7 @@ export interface BlogTranslationDTO {
 
 export interface CreateBlogDTO {
   slug: string;
+  isFeatured?: boolean;
   authorName?: string;
   readingTime?: number;
   translations: {
@@ -31,6 +33,7 @@ export interface CreateBlogDTO {
 
 export interface UpdateBlogBasicDTO {
   slug?: string;
+  isFeatured?: boolean;
   authorName?: string;
   readingTime?: number;
   translations?: {

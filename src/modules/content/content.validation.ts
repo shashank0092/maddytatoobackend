@@ -51,6 +51,10 @@ export const contentQuerySchema = z.object({
     bodyPlacement: z.string().optional(),
     tag: z.string().optional(),
     status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).optional(),
+    isFeatured: z.preprocess((val) => {
+      if (typeof val === 'string') return val === 'true';
+      return Boolean(val);
+    }, z.boolean()).optional(),
     sort: z.enum(['latest', 'oldest', 'title']).optional().default('latest'),
   }).merge(paginationQuerySchema),
 });
@@ -78,6 +82,7 @@ export const contentIdParamSchema = z.object({
 export const createContentSchema = z.object({
   body: z.object({
     slug: z.string().min(1).regex(slugRegex, 'Slug must be lowercase and contain only letters, numbers, and hyphens'),
+    isFeatured: z.boolean().optional(),
     contentTypeId: z.string().uuid('Invalid Content Type ID'),
     categoryId: z.string().uuid('Invalid Category ID').optional().nullable(),
     collectionId: z.string().uuid('Invalid Collection ID').optional().nullable(),
@@ -96,6 +101,7 @@ export const createContentSchema = z.object({
 export const updateContentBasicSchema = z.object({
   body: z.object({
     slug: z.string().min(1).regex(slugRegex, 'Slug must be lowercase and contain only letters, numbers, and hyphens').optional(),
+    isFeatured: z.boolean().optional(),
     translations: z.object({
       en: updateTranslationSchema.optional(),
       gu: updateTranslationSchema.optional(),

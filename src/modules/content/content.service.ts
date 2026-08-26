@@ -16,7 +16,7 @@ import {
 
 export class ContentService {
   async getAll(query: ContentQueryDTO, isAdmin: boolean = false) {
-    const { lang = 'en', search, sort = 'latest', status } = query;
+    const { lang = 'en', search, sort = 'latest', status, isFeatured } = query;
     const { page, limit, skip, take } = parsePaginationQuery(query.page as number, query.limit as number);
 
     const where: Prisma.ContentWhereInput = {};
@@ -26,6 +26,10 @@ export class ContentService {
       where.status = 'PUBLISHED';
     } else if (status) {
       where.status = status as any;
+    }
+
+    if (isFeatured !== undefined) {
+      where.is_featured = isFeatured as boolean;
     }
 
     if (search) {
@@ -96,6 +100,7 @@ export class ContentService {
       return {
         id: c.id,
         slug: c.slug,
+        isFeatured: c.is_featured,
         title: translation?.title || '',
         shortDescription: translation?.short_description || null,
         coverImageKey: c.media[0]?.s3_key || null,
@@ -159,6 +164,7 @@ export class ContentService {
       id: c.id,
       slug: c.slug,
       status: c.status,
+      isFeatured: c.is_featured,
       publishedAt: c.published_at,
       title: translation?.title || '',
       shortDescription: translation?.short_description || null,
@@ -232,6 +238,7 @@ export class ContentService {
       const content = await tx.content.create({
         data: {
           slug: data.slug,
+          is_featured: data.isFeatured ?? false,
           status: data.status || 'DRAFT',
           published_at: data.status === 'PUBLISHED' ? new Date() : null,
           content_type_id: data.contentTypeId,
@@ -293,7 +300,10 @@ export class ContentService {
     return prisma.$transaction(async (tx) => {
       await tx.content.update({
         where: { id },
-        data: { ...(data.slug && { slug: data.slug }) },
+        data: {
+          ...(data.slug && { slug: data.slug }),
+          ...(data.isFeatured !== undefined && { is_featured: data.isFeatured }),
+        },
       });
 
       if (data.translations) {

@@ -14,7 +14,7 @@ import {
 
 export const blogService = {
   async create(data: CreateBlogDTO) {
-    const { slug, authorName, readingTime, translations, seo } = data;
+    const { slug, isFeatured, authorName, readingTime, translations, seo } = data;
 
     // Ensure English is present (Zod also does this, but sanity check)
     if (!translations.en || !translations.en.title || !translations.en.content) {
@@ -32,6 +32,7 @@ export const blogService = {
         const newBlog = await tx.blog.create({
           data: {
             slug,
+            is_featured: isFeatured ?? false,
             author_name: authorName,
             reading_time: readingTime,
             status: 'DRAFT', // Default new blogs to DRAFT
@@ -114,7 +115,7 @@ export const blogService = {
   },
 
   async getAll(query: BlogQueryDTO, isAdmin: boolean) {
-    const { page = 1, limit = 10, language, search, status, sortBy, sortOrder } = query;
+    const { page = 1, limit = 10, language, search, status, isFeatured, sortBy, sortOrder } = query;
 
     const pageNum = Number(page);
     const limitNum = Number(limit);
@@ -132,6 +133,10 @@ export const blogService = {
     } else {
       // Public is ONLY allowed to see PUBLISHED
       where.status = 'PUBLISHED';
+    }
+
+    if (isFeatured !== undefined) {
+      where.is_featured = isFeatured as boolean;
     }
 
     // Apply search filter (against translations)
@@ -219,6 +224,7 @@ export const blogService = {
         id: b.id,
         slug: b.slug,
         status: b.status,
+        isFeatured: b.is_featured,
         authorName: b.author_name,
         readingTime: b.reading_time,
         publishedAt: b.published_at,
@@ -297,6 +303,7 @@ export const blogService = {
       id: blog.id,
       slug: blog.slug,
       status: blog.status,
+      isFeatured: blog.is_featured,
       authorName: blog.author_name,
       readingTime: blog.reading_time,
       publishedAt: blog.published_at,
@@ -336,11 +343,12 @@ export const blogService = {
     try {
       await prisma.$transaction(async (tx) => {
         // Update root blog properties
-        if (data.slug !== undefined || data.authorName !== undefined || data.readingTime !== undefined) {
+        if (data.slug !== undefined || data.authorName !== undefined || data.readingTime !== undefined || data.isFeatured !== undefined) {
           await tx.blog.update({
             where: { id },
             data: {
               ...(data.slug !== undefined && { slug: data.slug }),
+              ...(data.isFeatured !== undefined && { is_featured: data.isFeatured }),
               ...(data.authorName !== undefined && { author_name: data.authorName }),
               ...(data.readingTime !== undefined && { reading_time: data.readingTime }),
             },

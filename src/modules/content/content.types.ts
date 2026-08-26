@@ -22,6 +22,7 @@ export interface ContentQueryDTO {
   bodyPlacement?: string;
   tag?: string;
   status?: string;
+  isFeatured?: boolean | string;
   sort?: 'latest' | 'oldest' | 'title';
 }
 
@@ -37,6 +38,7 @@ export interface ContentTranslationDTO {
 
 export interface CreateContentDTO {
   slug: string;
+  isFeatured?: boolean;
   contentTypeId: string;
   categoryId?: string | null;
   collectionId?: string | null;
@@ -52,6 +54,7 @@ export interface CreateContentDTO {
 
 export interface UpdateContentBasicDTO {
   slug?: string;
+  isFeatured?: boolean;
   translations?: {
     en?: Partial<ContentTranslationDTO>;
     gu?: Partial<ContentTranslationDTO>;

@@ -37,6 +37,7 @@ const updateBlogSeoBodySchema = z.object({
 export const createBlogSchema = z.object({
   body: z.object({
     slug: slugSchema,
+    isFeatured: z.boolean().optional(),
     authorName: z.string().max(100).optional(),
     readingTime: z.number().int().min(1).optional(),
     translations: z.object({
@@ -50,6 +51,7 @@ export const createBlogSchema = z.object({
 export const updateBlogBasicSchema = z.object({
   body: z.object({
     slug: slugSchema.optional(),
+    isFeatured: z.boolean().optional(),
     authorName: z.string().max(100).optional(),
     readingTime: z.number().int().min(1).optional(),
     translations: z.object({
@@ -82,6 +84,10 @@ export const blogQuerySchema = z.object({
     language: languageSchema.optional(),
     search: z.string().max(100).optional(),
     status: statusSchema.optional(),
+    isFeatured: z.preprocess((val) => {
+      if (typeof val === 'string') return val === 'true';
+      return Boolean(val);
+    }, z.boolean()).optional(),
     sortBy: z.enum(['createdAt', 'updatedAt', 'publishedAt', 'title', 'readingTime']).optional(),
     sortOrder: z.enum(['asc', 'desc']).optional(),
   }),

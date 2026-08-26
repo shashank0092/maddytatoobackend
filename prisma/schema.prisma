@@ -277,6 +277,7 @@ model Content {
   body_placement_id String?       @db.Uuid
   slug              String        @unique
   status            ContentStatus @default(DRAFT)
+  is_featured       Boolean       @default(false)
   published_at      DateTime?     @db.Timestamptz()
   created_at        DateTime      @default(now()) @db.Timestamptz()
   updated_at        DateTime      @updatedAt @db.Timestamptz()
@@ -299,6 +300,7 @@ model Content {
   @@index([style_id])
   @@index([body_placement_id])
   @@index([status])
+  @@index([is_featured])
   @@index([published_at])
   @@map("contents")
 }
@@ -423,6 +425,7 @@ model Blog {
   id              String     @id @default(uuid()) @db.Uuid
   slug            String     @unique
   status          BlogStatus @default(DRAFT)
+  is_featured     Boolean    @default(false)
   author_name     String?
   reading_time    Int?
   cover_media_key String?
@@ -434,6 +437,7 @@ model Blog {
   seo          BlogSeo?
 
   @@index([status])
+  @@index([is_featured])
   @@index([published_at])
   @@map("blogs")
 }
