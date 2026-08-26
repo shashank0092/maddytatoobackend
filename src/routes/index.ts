@@ -12,6 +12,7 @@ import { styleRoutes } from '../modules/style';
 import { bodyPlacementRoutes } from '../modules/body-placement';
 import { tagRoutes } from '../modules/tag';
 import { mediaRoutes } from '../modules/media';
+import { dashboardRoutes } from '../modules/dashboard';
 const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
@@ -26,5 +27,6 @@ router.use('/styles', styleRoutes);
 router.use('/body-placements', bodyPlacementRoutes);
 router.use('/tags', tagRoutes);
 router.use('/media', mediaRoutes);
+router.use('/dashboard', dashboardRoutes);
 
 export default router;

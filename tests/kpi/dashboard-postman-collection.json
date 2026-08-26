@@ -1,0 +1,38 @@
+{
+  "info": {
+    "name": "Maddys Tattoo - Dashboard API",
+    "description": "Collection to test the new Dashboard Analytics API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Dashboard KPIs and Charts",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <paste_your_admin_token_here>",
+            "type": "text",
+            "description": "Replace <paste_your_admin_token_here> with your actual login token"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:3000/api/v1/dashboard",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "v1",
+            "dashboard"
+          ]
+        },
+        "description": "Hits the dashboard API to get all metrics"
+      },
+      "response": []
+    }
+  ]
+}
