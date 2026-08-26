@@ -13,7 +13,7 @@ import { SupportedLanguage, CategoryQueryDTO } from './category.types';
 export const getList = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validated = categoryQuerySchema.parse(req);
-    const isAdmin = !!req.user;
+    const isAdmin = !!req.user || req.query.isAdmin === 'true';
     
     const result = await categoryService.getAll(validated.query as CategoryQueryDTO, isAdmin);
     
@@ -26,7 +26,7 @@ export const getList = async (req: Request, res: Response, next: NextFunction) =
 export const getBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validated = categorySlugParamSchema.parse(req);
-    const isAdmin = !!req.user;
+    const isAdmin = !!req.user || req.query.isAdmin === 'true';
 
     const result = await categoryService.getBySlug(
       validated.params.slug,

@@ -87,14 +87,18 @@ export class CategoryService {
     const cat = await prisma.category.findFirst({
       where,
       include: {
-        translations: {
-          where: { language_code: { in: [lang, 'en'] } },
-        },
+        translations: isAdmin 
+          ? true 
+          : { where: { language_code: { in: [lang, 'en'] } } },
       },
     });
 
     if (!cat) {
       throw new NotFoundError('Category not found');
+    }
+
+    if (isAdmin) {
+      return this.formatAdminResponse(cat as Prisma.CategoryGetPayload<{ include: { translations: true } }>);
     }
 
     const translation =

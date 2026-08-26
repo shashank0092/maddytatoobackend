@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { requireAuth } from '../../core/middleware/requireAuth';
+import { optionalAuth } from '../../core/middleware/optionalAuth';
 import * as categoryController from './category.controller';
 
 const router = Router();
 
 // Public Routes
-router.get('/', categoryController.getList);
-router.get('/:slug', categoryController.getBySlug);
+router.get('/', optionalAuth, categoryController.getList);
+router.get('/:slug', optionalAuth, categoryController.getBySlug);
 
 // Admin Protected Routes
 router.post('/', requireAuth, categoryController.create);
