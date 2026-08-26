@@ -57,6 +57,7 @@ export const updateFeedbackSchema = z.object({
     email: z.string().trim().email().optional().nullable(),
     rating: z.number().int().min(1).max(5).optional(),
     consentToPublish: z.boolean().optional(),
+    isFeatured: z.boolean().optional(),
     isVerified: z.boolean().optional(),
     translations: z.object({
       en: translationSchema.optional(),

@@ -29,6 +29,7 @@ export interface UpdateFeedbackInput {
   email?: string | null;
   rating?: number;
   consentToPublish?: boolean;
+  isFeatured?: boolean;
   isVerified?: boolean;
   translations?: {
     en?: FeedbackTranslationInput;

@@ -84,6 +84,13 @@ export class FeedbackController {
         });
         return;
       }
+      if (error.message === 'CONSENT_REQUIRED_FOR_FEATURED') {
+        res.status(400).json({
+          success: false,
+          error: { code: 'CONSENT_REQUIRED', message: 'Feedback must be APPROVED and have consent to publish before being featured' },
+        });
+        return;
+      }
       next(error);
     }
   }

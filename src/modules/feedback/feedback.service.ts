@@ -291,6 +291,13 @@ export class FeedbackService {
       if (data.consentToPublish !== undefined) updateData.consent_to_publish = data.consentToPublish;
       if (data.isVerified !== undefined) updateData.is_verified = data.isVerified;
 
+      if (data.isFeatured !== undefined) {
+        if (data.isFeatured && (existing.status !== 'APPROVED' || !(data.consentToPublish ?? existing.consent_to_publish))) {
+          throw new Error('CONSENT_REQUIRED_FOR_FEATURED');
+        }
+        updateData.is_featured = data.isFeatured;
+      }
+
       // Handle consent change side-effects
       if (data.consentToPublish === false && existing.is_featured) {
          updateData.is_featured = false;
