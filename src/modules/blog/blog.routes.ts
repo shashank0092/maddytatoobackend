@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { requireAuth } from '../../core/middleware/requireAuth';
+import { optionalAuth } from '../../core/middleware/optionalAuth';
 import { validateRequest } from '../../core/middleware/validateRequest';
 import {
   create,
@@ -25,8 +26,8 @@ import {
 const router = Router();
 
 // Public Routes
-router.get('/', validateRequest(blogQuerySchema), getList);
-router.get('/:slug', validateRequest(blogSlugParamSchema), getBySlug);
+router.get('/', optionalAuth, validateRequest(blogQuerySchema), getList);
+router.get('/:slug', optionalAuth, validateRequest(blogSlugParamSchema), getBySlug);
 
 // Admin Routes
 router.use(requireAuth); // All routes below require authentication

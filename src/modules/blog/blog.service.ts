@@ -261,14 +261,14 @@ export const blogService = {
     const blog = await prisma.blog.findUnique({
       where: { slug },
       include: {
-        translations: {
+        translations: isAdmin ? true : {
           where: {
             language_code: { in: [targetLang, 'en'] },
           },
         },
         seo: {
           include: {
-            translations: {
+            translations: isAdmin ? true : {
               where: {
                 language_code: { in: [targetLang, 'en'] },
               },
@@ -299,6 +299,39 @@ export const blogService = {
       }
     }
 
+    if (isAdmin) {
+      return {
+        id: blog.id,
+        slug: blog.slug,
+        status: blog.status,
+        isFeatured: blog.is_featured,
+        authorName: blog.author_name,
+        readingTime: blog.reading_time,
+        publishedAt: blog.published_at,
+        coverMediaKey: blog.cover_media_key,
+        translations: blog.translations.map(t => ({
+          languageCode: t.language_code,
+          title: t.title,
+          excerpt: t.excerpt,
+          content: t.content,
+        })),
+        seo: blog.seo
+          ? {
+              canonicalUrl: blog.seo.canonical_url,
+              ogImageKey: blog.seo.og_image_key,
+              translations: blog.seo.translations.map(t => ({
+                languageCode: t.language_code,
+                metaTitle: t.meta_title,
+                metaDescription: t.meta_description,
+                keywords: t.keywords,
+                ogTitle: t.og_title,
+                ogDescription: t.og_description,
+              })),
+            }
+          : null,
+      };
+    }
+
     return {
       id: blog.id,
       slug: blog.slug,
@@ -307,6 +340,7 @@ export const blogService = {
       authorName: blog.author_name,
       readingTime: blog.reading_time,
       publishedAt: blog.published_at,
+      coverMediaKey: blog.cover_media_key,
       translation: trans
         ? {
             languageCode: trans.language_code,

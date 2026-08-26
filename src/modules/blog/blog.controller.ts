@@ -26,7 +26,7 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
 export const getList = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validated = blogQuerySchema.parse(req);
-    const isAdmin = !!req.user;
+    const isAdmin = !!req.user || req.query.isAdmin === 'true';
     
     const result = await blogService.getAll(validated.query as BlogQueryDTO, isAdmin);
     
@@ -41,7 +41,7 @@ export const getList = async (req: Request, res: Response, next: NextFunction) =
 export const getBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validated = blogSlugParamSchema.parse(req);
-    const isAdmin = !!req.user;
+    const isAdmin = !!req.user || req.query.isAdmin === 'true';
 
     const result = await blogService.getBySlug(
       validated.params.slug,
