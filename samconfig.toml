@@ -1,0 +1,15 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "maddytattobackend-prod"
+resolve_s3 = true
+s3_prefix = "maddytattobackend-prod"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "SecretId=\"maddytattobackend\" AwsIdentityPoolId=\"ap-south-1:975255fa-a9ba-4853-9a76-ae84c70acc18\""
+image_repositories = []
+resolve_image_repos = true
+disable_rollback = true
+
+[default.global.parameters]
+region = "ap-south-1"

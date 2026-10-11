@@ -1,0 +1,29 @@
+{
+  "rules": [
+    {
+      "rulePriority": 1,
+      "description": "Retain the latest three tagged images",
+      "selection": {
+        "tagStatus": "any",
+        "countType": "imageCountMoreThan",
+        "countNumber": 3
+      },
+      "action": {
+        "type": "expire"
+      }
+    },
+    {
+      "rulePriority": 2,
+      "description": "Expire untagged images after one day",
+      "selection": {
+        "tagStatus": "untagged",
+        "countType": "sinceImagePushed",
+        "countUnit": "days",
+        "countNumber": 1
+      },
+      "action": {
+        "type": "expire"
+      }
+    }
+  ]
+}

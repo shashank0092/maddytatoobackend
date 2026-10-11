@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Maddys Tattoo Backend AWS SAM Template
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Environment:
+      Variables:
+        NODE_ENV: production
+        SECRET_ID: !Ref SecretId
+        LOG_LEVEL: info
+
+Parameters:
+  SecretId:
+    Type: String
+    Default: maddytattobackend
+    Description: Name of the AWS Secrets Manager secret containing configuration
+  AwsIdentityPoolId:
+    Type: String
+    Description: AWS Cognito Identity Pool ID for developer authenticated identities
+
+Resources:
+  MaddysTattooApiFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./
+      DockerTag: nodejs24-v1
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-identity:GetOpenIdTokenForDeveloperIdentity
+              Resource: !Sub "arn:aws:cognito-identity:${AWS::Region}:${AWS::AccountId}:identitypool/${AwsIdentityPoolId}"
+        - Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretId}-*"
+      Events:
+        RootPath:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: ANY
+        CatchAll:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+
+Outputs:
+  HttpApiUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"

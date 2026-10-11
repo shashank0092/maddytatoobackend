@@ -1,0 +1,10 @@
+node_modules
+dist
+.aws-sam
+.git
+.env
+.DS_Store
+coverage
+Makefile
+samconfig.toml
+template.yaml
